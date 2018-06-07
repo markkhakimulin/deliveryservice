@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ListView
+        android:id="@+id/cheque_type_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice"
+        android:descendantFocusability="beforeDescendants" />
+
+
+    <LinearLayout
+        android:id="@+id/container_mix_pay"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+            <EditText
+                android:id="@+id/text_cheque_cash"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@mipmap/cash"
+                android:hint="@string/hint_cash"
+                android:inputType="numberDecimal"
+                android:windowSoftInputMode="adjustPan"/>
+            <EditText
+                android:id="@+id/text_cheque_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@mipmap/card"
+                android:hint="@string/hint_card"
+                android:inputType="numberDecimal"
+                android:windowSoftInputMode="adjustPan" />
+
+        <Button
+            android:id="@+id/button_mix_pay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/alert_button_ok" />
+   </LinearLayout>
+
+</LinearLayout>

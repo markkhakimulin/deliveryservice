@@ -1,0 +1,197 @@
+<resources>
+    <string name="app_name">Delivery FF</string>
+    <string name="currency"> rub</string>
+    <string name="alert_error">Error</string>
+    <string name="alert_button_ok">OK</string>
+    <string name="alert_button_yes">Yes</string>
+    <string name="alert_button_no">No</string>
+    <string name="alert_button_cancel">Cancel</string>
+    <string name="alert_title_no_orders">No orders found</string>
+    <string name="alert_message_no_orders">Do refresh orders list?</string>
+    <string name="alert_title_confirm_changes">Confirm refreshing</string>
+    <string name="alert_message_confirm_changes">These orders will lose</string>
+    <string name="alert_button_apply">Apply</string>
+    <string name="alert_button_refuse">Refuse</string>
+    <string name="alert_refresh">Downloading: </string>
+    <!-- Strings related to login -->
+    <string name="prompt_login">Login</string>
+    <string name="prompt_login_out">Log out</string>
+    <string name="refresh_login">Type login or swipe to refresh</string>
+    <string name="hint_cash">Cash</string>
+    <string name="hint_card">Card</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_internet_connection">Check internet connection</string>
+    <string name="error_no_internet_connection">No internet connection</string>
+    <string name="error_xml_parse">Error parsing xml.Check internet connection</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="error_incorrect_login">This login is incorrect</string>
+    <string name="error_found_login_message">No such login in database.Swipe to refresh driver list</string>
+    <string name="error_found_login_title">Incorrect barcode</string>
+    <string name="error_cant_find_order">Can not loaded order</string>
+    <string name="error_no_data_for_uploading">No data for uploading</string>
+    <string name="error_task_in_progress">Task in progress</string>
+    <string name="permission_rationale">Contacts permissions are needed for providing email completions.</string>
+    <string name="title_activity_login">Sign in</string>
+    <!-- Strings related to order details -->
+    <string name="order_details_page1">Details</string>
+    <string name="order_details_page2">Items</string>
+    <string name="order_details_page3">Payments</string>
+    <string name="order_details_result">In total:</string>
+    <string name="order_details_to_pay">To pay:</string>
+    <string name="order_details_payment_description">cheque description</string>
+    <string name="order_details_delivery">Delivery:</string>
+    <string name="order_details_result_discount">Discount</string>
+    <string name="order_details_result_cost">Cost</string>
+    <string name="order_details_result_count">Count</string>
+    <string name="order_details_error_negative_sum">Less zero</string>
+    <string name="order_details_error_item_not_found">Item is not found</string>
+    <string name="order_details_error_item_order_not_found">Item in this order is not found</string>
+    <string name="order_details_error_sum_zero">Order sum can not be 0 or less</string>
+    <string name="order_details_error_build_check">Error to build check</string>
+    <string name="order_details_error_upload_orders">Error to process uploaded orders</string>
+    <string name="order_details_order_list_empty">No data</string>
+    <string name="order_details_order_list">Uncheck to refuse position</string>
+    <string name="order_details_payment_list_empty">No payments</string>
+    <string name="order_details_check_type_sell">Sell</string>
+    <string name="order_details_check_type_return">Return</string>
+    <string name="order_details_check_type_mistake">Mistake</string>
+    <string name="order_details_check_confirm">Confirm cheque sum</string>
+    <!-- Strings related to order detail -->
+    <string name="order_detail_status">Status</string>
+    <string name="order_detail_code">Order ID</string>
+    <string name="order_detail_customer">Customer</string>
+    <string name="order_detail_refuse_reason">Refuse reason</string>
+    <string name="order_detail_phone">Phone</string>
+    <string name="order_detail_time">Time</string>
+    <string name="order_detail_date">Date</string>
+    <string name="order_detail_address">Address</string>
+    <string name="order_detail_comment">Comment</string>
+    <string name="order_detail_id">document id</string>
+    <string name="order_detail_button_cancel">Cancel</string>
+    <string name="order_detail_button_map">Show on map</string>
+    <string name="order_detail_select_refuse_reasons">Select refuse reasons</string>
+    <string name="order_detail_select_check_type">Select check type</string>
+    <string name="order_detail_select_payment_type">Select payment type</string>
+    <string name="order_detail_order_completed">Order in status completed</string>
+    <string name="order_detail_order_paid">Order is paid. No need check</string>
+    <string name="order_detail_order_change">Give a change</string>
+    <string name="order_detail_order_remainder">Get a remainder</string>
+    <string name="order_detail_mix_pay">Mix pay</string>
+    <string name="order_detail_map_loading">Map loading</string>
+
+    <!-- Strings related to order list -->
+    <string name="order_list_empty_refresh">Swipe to refresh</string>
+    <string name="orders_uploaded">Orders uploaded</string>
+    <!-- Strings related to login -->
+    <string name="driver_name">Driver name</string>
+    <string name="driver_id">Driver ID</string>
+    <string name="prompt_email">Email</string>
+    <string name="title_activity_order_detail">OrderDetail</string>
+    <string name="action_settings">Settings CCM</string>
+    <string name="action_check">Check CCM</string>
+    <string name="action_check_unsent_data_ofd">Diagnostic OFD</string>
+    <string name="action_process_cheque">Process cheque complete</string>
+    <string name="action_about">About</string>
+    <string name="title_about_app">About app</string>
+    <string name="action_x_report">X report</string>
+    <string name="action_z_report">Z report</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_logout">Log out</string>
+    <string name="title_activity_order_navigation">OrderNavigationActivity</string>
+    <!-- Strings related to navigation -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_order_details">OrderDetailsActivity</string>
+    <string name="navigation_drawer_menu_all">All</string>
+    <string name="navigation_drawer_menu_in_progress">In progress</string>
+    <string name="navigation_drawer_menu_canceled">Canceled</string>
+    <string name="navigation_drawer_menu_completed">Completed</string>
+    <string name="navigation_drawer_menu_archive">Archive</string>
+    <string name="navigation_drawer_menu_upload">Upload</string>
+    <string name="navigation_drawer_menu_refresh">Refresh</string>
+    <string name="navigation_drawer_menu_other">Other</string>
+    <string name="navigation_drawer_menu_settings">Settings</string>
+    <string name="navigation_drawer_menu_logout">Log out</string>
+    <string name="navigation_action_mode_clear">Clear changes</string>
+    <string name="navigation_archive_dialog_date_order">By order date</string>
+    <string name="navigation_archive_dialog_date_cheque">By order cheque</string>
+    <!-- messages-->
+
+    <string name="message_orders_cleared">Orders cleared: </string>
+    <string name="msg_from">С %tD.\n</string>
+    <string name="msg_unsent_title">Неотправленные док-ты в ОФД.</string>
+    <string name="msg_unsent">Неотправленно : %d.\n</string>
+    <string name="msg_unsent_reason"> по причине (%s). Код  ошибки [%d].
+    </string>
+    <string name="msg_unsent_error_network">Ошибка сети</string>
+    <string name="msg_unsent_error_ofd">Ошибка ОФД</string>
+    <string name="msg_unsent_error_fn">Ошибка ФН</string>
+    <string name="msg_run_diagnostic_agreement">%sЗапустить диагностику соединения с ОФД?</string>
+
+    <string name="msg_progress_0">Установка адреса ОФД</string>
+    <string name="msg_progress_1">Установка DNS ОФД</string>
+    <string name="msg_progress_2">Установка адреса сайта ФНС</string>
+    <string name="msg_progress_3">Установка адреса сервера диагностики</string>
+    <string name="msg_progress_4">Установка порта сервера ОФД</string>
+    <string name="msg_progress_5">Установка канала обмена с ОФД</string>
+    <string name="msg_progress_6">Установка порта сервера диагностики</string>
+    <string name="msg_progress_7">Установка интервала посылок диагностических сообщений</string>
+    <string name="msg_progress_8">Установка интервала ожидания квитации ОФД</string>
+    <string name="msg_progress_9">Запуск диагностики</string>
+
+    <string name="msg_do_not_turn_off_attention">Не выключайте кассу пока идет снятие отчета</string>
+    <string name="msg_do_not_turn_off_ofd_transfer">Непередано в ОФД : %d.
+        Не выключайте кассу пока идет загрузка!
+        Попытка передачи %d из %d"</string>
+    <string name="msg_complete_ofd_transfer">Все документы отправлены.Можете выключить кассу.</string>
+    <string name="msg_fail_ofd_transfer_title">Ошибка передачи данных в ОФД.</string>
+    <string name="msg_fail_ofd_transfer">Убедитесь, что на вашем телефоне есть соединение с интернетом.</string>
+    <string name="msg_fail_ofd_transfer_attention">Перед запуском диагностики убедитесь, что касса включена и на телефоне присутствует интернет</string>
+    <string name="msg_fail_ofd_transfer_attention_title">Внимание!!!</string>
+    <!-- Strings fptr settings-->
+    <string name="fptr_settings_loading">Loading settings</string>
+    <string name="fptr_settings_set_user">Set user</string>
+    <string name="fptr_settings_set_connection">Set connection</string>
+    <string name="fptr_settings_check_connection">Check connection</string>
+    <string name="fptr_settings_set_z_report">Установка режима отчета с гашением</string>
+    <string name="fptr_settings_set_x_report">установка режима отчета без гашения</string>
+    <string name="fptr_settings_cancel_cheque">Cancel cheque</string>
+    <string name="fptr_settings_report">Report output</string>
+    <string name="fptr_settings_ok">OK</string>
+    <string name="fptr_settings_open_cheque">Open cheque</string>
+    <string name="fptr_settings_close_cheque">Close cheque</string>
+    <string name="fptr_settings_income_cash">Income cash</string>
+    <string name="fptr_settings_payment">Payment</string>
+    <string name="fptr_settings_remainder">Remainder</string>
+    <string name="fptr_settings_change">Charge</string>
+    <string name="fptr_settings_change_successful">Настройки успешно изменены</string>
+    <string name="fptr_settings_default_model">АТОЛ 11Ф</string>
+    <string name="fptr_settings_default_transport">bluetooth</string>
+    <string name="fptr_settings_default_protocol">По умолчанию</string>
+    <string name="fptr_settings_default_ports_ofd">EthernetOverTransport</string>
+    <string name="fptr_settings_err_bluetooth_detection">Не найден bluetooth на телефоне</string>
+    <string name="fptr_settings_bluetooth_searching">Поиск подключенных bluetooth устройств</string>
+    <string name="fptr_settings_err_bluetooth_searching">"Не удалось найти подключенные ККМ устройства.
+        Убедитесь ,что ККМ присутствует в подключенных устройствах в настройках Bluetooth телефона!"</string>
+    <string name="fptr_settings_err_setup">Не удалось автоматически установить ККМ, т.к. на телефоне подключено более одного устройства.
+        Необходимо выбрать нужную ККТ вручную в разделе 'Устройство'"</string>
+
+    <!-- Strings soap settings-->
+    <string name="soap_error_order_pack">Sync get orders error</string>
+    <string name="soap_error_order_changes">Sync put orders error</string>
+
+    <bool name="cameraPreviewShouldFillView">true</bool>
+
+    <string-array name="notification_types">
+        <item>None</item>
+        <item>Phone</item>
+        <item>E-mail</item>
+    </string-array>
+
+    <string name="notification_prompt">choose method</string>
+</resources>

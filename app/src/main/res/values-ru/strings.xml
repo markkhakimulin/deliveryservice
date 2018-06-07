@@ -1,0 +1,193 @@
+<resources>
+    <string name="app_name">Доставка FF</string>
+    <string name="currency"> руб</string>
+    <string name="alert_error">Ошибка</string>
+    <string name="alert_button_ok">OK</string>
+    <string name="alert_button_yes">Да</string>
+    <string name="alert_button_no">Нет</string>
+    <string name="alert_button_cancel">Отмена</string>
+    <string name="alert_title_no_orders">Не найдено заказов</string>
+    <string name="alert_message_no_orders">Обновить список заказов?</string>
+    <string name="alert_title_confirm_changes">Подтверждение обновления</string>
+    <string name="alert_message_confirm_changes">Эти заказы без изменений будут потеряны.</string>
+    <string name="alert_button_apply">Применить</string>
+    <string name="alert_button_refuse">Осталось распределить</string>
+    <string name="alert_refresh">Загружено: </string>
+    <!-- Strings related to login -->
+    <string name="prompt_login">Войти</string>
+    <string name="prompt_login_out">Выйти</string>
+    <string name="refresh_login">Введите логин или сдвиньте вниз для обновления</string>
+    <string name="hint_cash">Наличными</string>
+    <string name="hint_card">Картой</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="action_sign_in">Войти</string>
+    <string name="action_sign_in_short">Войти</string>
+    <string name="error_invalid_password">Пароль слишком короткий</string>
+    <string name="error_incorrect_password">Непрвильный пароль</string>
+    <string name="error_field_required">Это обязательное поле</string>
+    <string name="error_internet_connection">Проверьте интернет подключение</string>
+    <string name="error_no_internet_connection">Нет соединения с интернетом</string>
+    <string name="error_xml_parse">Ошибка разбора xml.Проверьте интернет подключение</string>
+    <string name="error_unknown">Неизвесная ошибка</string>
+    <string name="error_incorrect_login">Неправильное имя пользователя</string>
+    <string name="error_found_login_message">Нет такого пользователя в базе. Обновите список пользователей</string>
+    <string name="error_found_login_title">Неправильный штрихкод</string>
+    <string name="error_cant_find_order">Невозможно загрузить заказ</string>
+    <string name="error_no_data_for_uploading">нет данных для выгрузки</string>
+    <string name="error_task_in_progress">Задача выполняется</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+    <string name="title_activity_login">Вход</string>
+    <!-- Strings related to order details -->
+    <string name="order_details_page1">Детали</string>
+    <string name="order_details_page2">Номенклатура</string>
+    <string name="order_details_page3">Платежи</string>
+    <string name="order_details_result">Всего:</string>
+    <string name="order_details_to_pay">К оплате:</string>
+    <string name="order_details_payment_description">Описание чека</string>
+    <string name="order_details_delivery">Доставка:</string>
+    <string name="order_details_result_discount">Скидка</string>
+    <string name="order_details_result_cost">Цена</string>
+    <string name="order_details_result_count">Количество</string>
+    <string name="order_details_error_negative_sum">Меньше нуля</string>
+    <string name="order_details_error_item_not_found">Номенклатура не найдена</string>
+    <string name="order_details_error_item_order_not_found">Номенклатура в заказе не найдена</string>
+    <string name="order_details_error_sum_zero">Сумма заказа не может быть нулевой или меньше</string>
+    <string name="order_details_error_build_check">Ошибка создания чека</string>
+    <string name="order_details_error_upload_orders">Ошибка отправки заказов</string>
+    <string name="order_details_order_list_empty">Нет заказов</string>
+    <string name="order_details_order_list">Снимите флажок, чтобы отказаться от позиции</string>
+    <string name="order_details_payment_list_empty">Нет платежей</string>
+    <string name="order_details_check_type_sell">Продажа</string>
+    <string name="order_details_check_type_return">Возврат</string>
+    <string name="order_details_check_type_mistake">Ошибочный чек</string>
+    <string name="order_details_check_confirm">Подтвердите сумму чека</string>
+    <!-- Strings related to order detail -->
+    <string name="order_detail_status">Статус</string>
+    <string name="order_detail_code">Заказ ID</string>
+    <string name="order_detail_customer">Покупатель</string>
+    <string name="order_detail_refuse_reason">Причина отказа</string>
+    <string name="order_detail_phone">Телефон</string>
+    <string name="order_detail_time">Время</string>
+    <string name="order_detail_date">Дата</string>
+    <string name="order_detail_address">Адрес</string>
+    <string name="order_detail_comment">Комментарий</string>
+    <string name="order_detail_id">document id</string>
+    <string name="order_detail_button_cancel">Отменить</string>
+    <string name="order_detail_button_map">Показать на карте</string>
+    <string name="order_detail_select_refuse_reasons">Выберите причину отказа</string>
+    <string name="order_detail_select_check_type">Выберите тип чека</string>
+    <string name="order_detail_select_payment_type">Выберите тип оплаты</string>
+    <string name="order_detail_order_completed">Заказ в статусе завершен</string>
+    <string name="order_detail_order_paid">Заказ оплачен. Чек не нужен</string>
+    <string name="order_detail_order_change">Дать сдачу</string>
+    <string name="order_detail_order_remainder">Получить остаток</string>
+    <string name="order_detail_mix_pay">Смешанная</string>
+    <string name="order_detail_map_loading">Загрузка карты</string>
+    <!-- Strings related to order list -->
+    <string name="order_list_empty_refresh">Проведите по экрану, чтобы обновить</string>
+    <string name="orders_uploaded">Заказы выгружены</string>
+    <!-- Strings related to login -->
+    <string name="driver_name">Имя пользователя</string>
+    <string name="driver_id">ID пользователя</string>
+    <string name="prompt_email">Email</string>
+    <string name="title_activity_order_detail">Детали заказа</string>
+    <string name="action_settings">Настройки ККМ</string>
+    <string name="action_check">Проверить ККМ</string>
+    <string name="action_check_unsent_data_ofd">Диагностика ОФД</string>
+    <string name="action_process_cheque">Обработка пробития чека</string>
+    <string name="action_about">Информация</string>
+    <string name="title_about_app">Версия приложения</string>
+    <string name="action_x_report">X отчет(сверка денег)</string>
+    <string name="action_z_report">Z отчет(закр. смену)</string>
+    <string name="action_refresh">Обновить</string>
+    <string name="action_logout">Выйти</string>
+    <!--<string name="section_format">Hello World from section: %1$d</string>-->
+    <string name="title_activity_order_navigation">Фильтр заказов</string>
+    <string name="navigation_drawer_open">Открыть фильтр заказов</string>
+    <string name="navigation_drawer_close">Закарыть фильтр заказов</string>
+    <string name="title_activity_order_details">Детали заказа</string>
+    <string name="navigation_drawer_menu_all">Все заказы</string>
+    <string name="navigation_drawer_menu_in_progress">Текущие</string>
+    <string name="navigation_drawer_menu_canceled">Отмененные</string>
+    <string name="navigation_drawer_menu_completed">Пробитые</string>
+    <string name="navigation_drawer_menu_archive">В архиве</string>
+    <string name="navigation_drawer_menu_upload">Выгрузить в 1С</string>
+    <string name="navigation_drawer_menu_refresh">Обновить</string>
+    <string name="navigation_drawer_menu_other">Другое</string>
+    <string name="navigation_drawer_menu_settings">Настройки</string>
+    <string name="navigation_drawer_menu_logout">Выйти</string>
+    <string name="navigation_action_mode_clear">Очистить изменения</string>
+    <string name="navigation_archive_dialog_date_order">По дате заказа</string>
+    <string name="navigation_archive_dialog_date_cheque">По дате чека</string>
+    <!-- messages-->
+    <string name="message_orders_cleared">Заказов очищено: </string>
+    <string name="msg_from">С %tD.\n</string>
+    <string name="msg_unsent_title">Неотправленные док-ты в ОФД.</string>
+    <string name="msg_unsent">Неотправленно : %d.\n</string>
+    <string name="msg_unsent_reason"> по причине (%s). Код  ошибки [%d].
+    </string>
+    <string name="msg_unsent_error_network">Ошибка сети</string>
+    <string name="msg_unsent_error_ofd">Ошибка ОФД</string>
+    <string name="msg_unsent_error_fn">Ошибка ФН</string>
+    <string name="msg_run_diagnostic_agreement">%sЗапустить диагностику соединения с ОФД?</string>
+
+    <string name="msg_progress_0">Установка адреса ОФД</string>
+    <string name="msg_progress_1">Установка DNS ОФД</string>
+    <string name="msg_progress_2">Установка адреса сайта ФНС</string>
+    <string name="msg_progress_3">Установка адреса сервера диагностики</string>
+    <string name="msg_progress_4">Установка порта сервера ОФД</string>
+    <string name="msg_progress_5">Установка канала обмена с ОФД</string>
+    <string name="msg_progress_6">Установка порта сервера диагностики</string>
+    <string name="msg_progress_7">Установка интервала посылок диагностических сообщений</string>
+    <string name="msg_progress_8">Установка интервала ожидания квитации ОФД</string>
+    <string name="msg_progress_9">Запуск диагностики</string>
+
+    <string name="msg_do_not_turn_off_attention">Не выключайте кассу пока идет снятие отчета</string>
+    <string name="msg_do_not_turn_off_ofd_transfer">Непередано в ОФД : %d.
+        Не выключайте кассу пока идет загрузка!
+        Попытка передачи %d из %d"</string>
+    <string name="msg_complete_ofd_transfer">Все документы отправлены.Можете выключить кассу.</string>
+    <string name="msg_fail_ofd_transfer_title">Ошибка передачи данных в ОФД.</string>
+    <string name="msg_fail_ofd_transfer">Убедитесь, что на вашем телефоне есть соединение с интернетом.</string>
+    <string name="msg_fail_ofd_transfer_attention">Перед запуском диагностики убедитесь, что касса включена и на телефоне присутствует интернет</string>
+    <string name="msg_fail_ofd_transfer_attention_title">Внимание!!!</string>
+    <!-- Strings fptr settings-->
+    <string name="fptr_settings_loading">Загрузка настроек</string>
+    <string name="fptr_settings_set_user">Установка кассира</string>
+    <string name="fptr_settings_set_connection">Установка соединения</string>
+    <string name="fptr_settings_check_connection">Проверка связи</string>
+    <string name="fptr_settings_set_z_report">Установка режима отчета с гашением</string>
+    <string name="fptr_settings_set_x_report">установка режима отчета без гашения</string>
+    <string name="fptr_settings_cancel_cheque">Отмена чека</string>
+    <string name="fptr_settings_report">Вывод отчета</string>
+    <string name="fptr_settings_ok">OK</string>
+    <string name="fptr_settings_open_cheque">Открытие фискального чека</string>
+    <string name="fptr_settings_close_cheque">Закрытие фискального чека</string>
+    <string name="fptr_settings_income_cash">Внесение денег в кассу</string>
+    <string name="fptr_settings_payment">Оплата</string>
+    <string name="fptr_settings_remainder">Остаток</string>
+    <string name="fptr_settings_change">Сдача</string>
+    <string name="fptr_settings_change_successful">Настройки успешно изменены</string>
+    <string name="fptr_settings_default_model">АТОЛ 11Ф</string>
+    <string name="fptr_settings_default_transport">bluetooth</string>
+    <string name="fptr_settings_default_protocol">По умолчанию</string>
+    <string name="fptr_settings_default_ports_ofd">EthernetOverTransport</string>
+    <string name="fptr_settings_err_bluetooth_detection">Не найден bluetooth на телефоне</string>
+    <string name="fptr_settings_bluetooth_searching">Поиск подключенных bluetooth устройств</string>
+    <string name="fptr_settings_err_bluetooth_searching">"Не удалось найти подключенные ККМ устройства.
+        Убедитесь ,что ККМ присутствует в подключенных устройствах в настройках Bluetooth телефона!"</string>
+    <string name="fptr_settings_err_setup">Не удалось автоматически установить ККМ, т.к. на телефоне подключено более одного устройства.
+        Необходимо выбрать нужную ККТ вручную в разделе 'Устройство'"</string>
+    <!-- Strings soap settings-->
+    <string name="soap_error_order_pack">Ошибка синхронизации заказов</string>
+    <string name="soap_error_order_changes">Ошибка выгрузки заказов</string>
+
+
+
+    <string-array name="notification_types">
+        <item>Не уведомлять</item>
+        <item>SMS</item>
+        <item>E-mail</item>
+    </string-array>
+    <string name="notification_prompt">Уведомлять по</string>
+</resources>

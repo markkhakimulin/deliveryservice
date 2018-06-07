@@ -1,0 +1,161 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.ff.deliveryservice.OrderDetailsActivity$OrderDetailsFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/padding"
+        android:paddingRight="@dimen/padding"
+        android:paddingTop="@dimen/padding"
+        android:paddingBottom="@dimen/padding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/order_detail_code_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="@string/order_detail_code"
+                android:lineSpacingExtra="24sp"
+                android:textSize="14sp"
+                android:textStyle="normal|bold"
+                android:layout_below="@+id/order_detail_status_view" />
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
+
+
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/order_detail_status_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                tools:text="@string/order_detail_status"
+                                android:textSize="14sp"
+                                android:textStyle="normal|bold"
+                                android:paddingBottom="@dimen/padding"
+                                android:layout_weight="1" />
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" >
+
+                            <TextView
+                                android:id="@+id/order_detail_refuse_reason_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                tools:text="@string/order_detail_refuse_reason"
+                                android:lineSpacingExtra="24sp" />
+                        </TableRow>
+
+                    </TableLayout>
+
+                    <Button
+                        android:id="@+id/order_details_button_cancel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="@string/order_detail_button_cancel" />
+
+                </TableRow>
+
+            </TableLayout>
+
+            <TextView
+                android:id="@+id/order_detail_phone_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/order_detail_time_view"
+                android:autoLink="phone"
+                android:lineSpacingExtra="24sp"
+                android:phoneNumber="true"
+                android:textSize="18sp"
+                android:textStyle="normal|bold"
+                tools:text="@string/order_detail_phone" />
+
+            <TextView
+                android:id="@+id/order_detail_customer_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/order_detail_code_view"
+                android:lineSpacingExtra="24sp"
+                android:textSize="18sp"
+                tools:text="@string/order_detail_customer" />
+
+            <TextView
+                android:id="@+id/order_detail_date_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="@string/order_detail_date"
+                android:lineSpacingExtra="24sp"
+                android:layout_below="@+id/order_detail_customer_view" />
+
+            <TextView
+                android:id="@+id/order_detail_time_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="@string/order_detail_time"
+                android:lineSpacingExtra="24sp"
+                android:layout_below="@+id/order_detail_date_view" />
+
+            <TextView
+                android:id="@+id/order_detail_address_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/order_detail_phone_view"
+                android:lineSpacingExtra="8sp"
+                android:minLines="2"
+                tools:text="@string/order_detail_address" />
+
+            <Button
+                android:id="@+id/order_details_button_map"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="@string/order_detail_button_map" />
+
+            <TextView
+                android:id="@+id/order_detail_comment_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="@string/order_detail_comment"
+                android:lineSpacingExtra="8sp"
+                android:layout_below="@+id/order_detail_address_view"
+                android:minLines="2"
+                android:textSize="14sp"
+                android:textAlignment="viewStart" />
+
+            <TextView
+                android:id="@+id/order_detail_id_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="@string/order_detail_id"
+                android:lineSpacingExtra="24sp"
+                android:layout_below="@+id/order_detail_comment_view" />
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

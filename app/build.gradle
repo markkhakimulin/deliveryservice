@@ -1,0 +1,92 @@
+apply plugin: 'com.android.application'
+android {
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
+    defaultConfig {
+        applicationId "com.ff.deliveryservice"
+        minSdkVersion 17
+        targetSdkVersion 27
+        versionCode 50
+        versionName "3.96"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+
+        //settings
+        resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
+        //registers
+        resValue "integer", "register_code_errors", project.findProperty("REGISTER_CODE_ERRORS")
+        resValue "integer", "register_quantity_unsent_ofd", project.findProperty("REGISTER_QUANTITY_UNSENT_OFD")
+        resValue "integer", "register_date_unsent_ofd", project.findProperty("REGISTER_DATE_UNSENT_OFD")
+        resValue "integer", "register_version_ffd", project.findProperty("REGISTER_VERSION_FFD")
+        resValue "integer", "register_fn_number", project.findProperty("REGISTER_FN_NUMBER")
+        //captions
+        resValue "integer", "url_fns_caption_purpose", project.findProperty("URL_FNS_CAPTION_PURPOSE")
+        resValue "string", "url_fns_caption", (project.findProperty("URL_FNS_CAPTION") ?: "")
+
+        resValue "integer", "url_atol_caption_purpose", project.findProperty("URL_ATOL_CAPTION_PURPOSE")
+        resValue "string", "url_atol_caption", (project.findProperty("URL_ATOL_CAPTION") ?: "")
+
+        resValue "integer", "url_ofd_caption_purpose", project.findProperty("URL_OFD_CAPTION_PURPOSE")
+        resValue "string", "url_ofd_sbis_test_caption", (project.findProperty("URL_OFD_SBIS_TEST_CAPTION") ?: "")
+        resValue "string", "url_ofd_sbis_caption", (project.findProperty("URL_OFD_SBIS_CAPTION") ?: "")
+        resValue "string", "url_ofd_platforma_test_caption", (project.findProperty("URL_OFD_PLATFORMA_TEST_CAPTION") ?: "")
+        resValue "string", "url_ofd_platforma_caption", (project.findProperty("URL_OFD_PLATFORMA_CAPTION") ?: "")
+
+        resValue "integer", "dns_ofd_caption_purpose", project.findProperty("DNS_OFD_CAPTION_PURPOSE")
+        resValue "string", "dns_ofd_caption", (project.findProperty("DNS_OFD_CAPTION") ?: "")
+
+        resValue "string", "soap_url", (project.findProperty("SOAP_URL") ?: "")
+        resValue "string", "soap_namespace", (project.findProperty("SOAP_NAMESPACE") ?: "")
+        resValue "string", "soap_method_login_list", (project.findProperty("SOAP_METHOD_LOGIN_LIST") ?: "")
+        resValue "string", "soap_method_login", (project.findProperty("SOAP_METHOD_LOGIN") ?: "")
+        resValue "string", "soap_method_order_pack", (project.findProperty("SOAP_METHOD_ORDER_PACK") ?: "")
+        resValue "string", "soap_method_put_order_pack", (project.findProperty("SOAP_METHOD_PUT_ORDER_PACK") ?: "")
+
+        //values
+        resValue "integer", "port_ofd_value_purpose", project.findProperty("PORT_OFD_VALUE_PURPOSE")
+        resValue "integer", "port_ofd_sbis_value", project.findProperty("PORT_OFD_SBIS_VALUE")
+        resValue "integer", "port_ofd_platforma_value", project.findProperty("PORT_OFD_PLATFORMA_VALUE")
+        resValue "integer", "PORT_OFD_SBIS_TEST_VALUE", project.findProperty("PORT_OFD_SBIS_TEST_VALUE")
+        resValue "integer", "PORT_OFD_PLATFORMA_TEST_VALUE", project.findProperty("PORT_OFD_PLATFORMA_TEST_VALUE")
+
+        resValue "integer", "network_chanel_value_purpose", project.findProperty("NETWORK_CHANEL_VALUE_PURPOSE")
+        resValue "integer", "network_chanel_gsm_value", project.findProperty("NETWORK_CHANEL_GSM_VALUE")
+        resValue "integer", "network_chanel_eot_value", project.findProperty("NETWORK_CHANEL_EOT_VALUE")
+
+        resValue "integer", "port_http_value_purpose", project.findProperty("PORT_HTTP_VALUE_PURPOSE")
+        resValue "integer", "port_http_value", project.findProperty("PORT_HTTP_VALUE")
+
+        resValue "integer", "diagnostic_delay_messages_value_purpose", project.findProperty("DIAGNOSTIC_DELAY_MESSAGES_VALUE_PURPOSE")
+        resValue "integer", "diagnostic_delay_messages_value", project.findProperty("DIAGNOSTIC_DELAY_MESSAGES_VALUE")
+
+        resValue "integer", "period_waiting_value_purpose", project.findProperty("PERIOD_WAITING_VALUE_PURPOSE")
+        resValue "integer", "period_waiting_value", project.findProperty("PERIOD_WAITING_VALUE")
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:27.1.0'
+    implementation 'com.android.support:design:27.1.0'
+    compile project(':fptr')
+    compile project(':zxing')
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+}
+
+

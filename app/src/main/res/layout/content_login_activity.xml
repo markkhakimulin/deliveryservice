@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="false"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.ff.deliveryservice.LoginActivity"
+    tools:showIn="@layout/activity_login">
+
+    <ProgressBar
+        android:id="@+id/login_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/login_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/activity_vertical_margin">
+
+        <TableLayout
+            android:id="@+id/email_login_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="true">
+
+
+                <AutoCompleteTextView
+                    android:id="@+id/login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:elevation="1dp"
+                    android:hint="@string/refresh_login"
+                    android:imeActionId="@+id/login"
+                    android:imeActionLabel="@string/action_sign_in_short"
+                    android:inputType="textAutoComplete"
+                    android:singleLine="false"
+                    android:textAlignment="textStart" />
+
+                <ImageButton
+                    android:id="@+id/barcodeButton"
+                    style="@style/Widget.AppCompat.ImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:accessibilityLiveRegion="assertive"
+                    android:accessibilityTraversalAfter="@+id/login"
+                    android:accessibilityTraversalBefore="@+id/login"
+                    android:adjustViewBounds="false"
+                    android:cropToPadding="false"
+                    android:keepScreenOn="true"
+                    android:labelFor="@+id/login"
+                    android:minHeight="24dp"
+                    android:scaleType="fitStart"
+                    android:src="@mipmap/barcode"
+                    app:srcCompat="@mipmap/qrcode" />
+            </TableRow>
+
+
+            <Button
+                android:id="@+id/login_sign_in_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/action_sign_in_short"
+                android:textStyle="bold" />
+
+        </TableLayout>
+
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="false"
+    android:stretchColumns="1,2">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="?attr/dividerVertical"
+            android:id="@+id/footer_total_row">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:paddingRight="@dimen/padding"
+                android:paddingTop="@dimen/padding"
+                android:text="@string/order_details_result"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="normal|bold" />
+
+            <TextView
+                android:id="@+id/item_row_footer_discount_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:width="80dp"
+                android:paddingLeft="@dimen/padding"
+                android:paddingRight="@dimen/padding"
+                android:paddingTop="@dimen/padding" />
+
+            <TextView
+                android:id="@+id/item_row_footer_cost_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:width="80dp"
+                android:paddingLeft="@dimen/padding"
+                android:paddingRight="@dimen/padding"
+                android:paddingTop="@dimen/padding" />
+
+            <TextView
+                android:id="@+id/item_row_footer_count_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:width="30dp"
+                android:paddingLeft="@dimen/padding"
+                android:paddingRight="@dimen/padding"
+                android:paddingTop="@dimen/padding" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="?attr/dividerVertical"
+            android:id="@+id/footer_topay_row"
+            android:layout_below="@+id/footer_total_row">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:paddingRight="@dimen/padding"
+                android:text="@string/order_details_to_pay"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="normal|bold" />
+
+
+            <TextView
+                android:id="@+id/item_row_footer_topay_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:width="100dp"
+                android:paddingLeft="@dimen/padding"
+                android:paddingRight="@dimen/padding"
+                android:textAlignment="viewStart"
+                android:textStyle="normal|bold" />
+        </TableRow>
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="?attr/dividerVertical"
+        android:id="@+id/footer_delivery_info"
+        android:layout_below="@+id/footer_topay_row">
+
+        <TextView
+            android:id="@+id/footer_delivery_info_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingBottom="@dimen/padding"
+            android:paddingLeft="@dimen/padding"
+            android:paddingRight="@dimen/padding"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:textColor="@color/holo_red_light" />
+
+    </TableRow>
+</RelativeLayout>
+
+

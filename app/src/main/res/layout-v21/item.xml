@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/select_navigation_item">
+
+    <TableLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow android:gravity="right">
+
+                <TextView
+                android:text="TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/order_item_title"
+                    android:textSize="18sp"
+                    tools:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:autoText="false"
+                    android:textColor="?android:attr/colorControlNormal"
+                    android:textColorHighlight="?attr/colorControlNormal"
+                    android:textStyle="normal|bold" />
+
+                <TextView
+                    android:text="TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/order_item_status"
+                    android:textStyle="normal|bold" />
+            </TableRow>
+            <TableRow
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:text="TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/order_item_customer"
+                    android:textSize="14sp"
+                    android:layout_column="1"
+                    android:paddingLeft="@dimen/padding"
+                    android:paddingRight="@dimen/padding" />
+
+            </TableRow>
+            <TableRow
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:text="TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/order_item_time"
+                    android:textSize="14sp"
+                    android:layout_column="1"
+                    android:paddingLeft="@dimen/padding"
+                    android:paddingRight="@dimen/padding" />
+
+                <TextView
+                    android:text="TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/order_item_date"
+                    android:paddingRight="5dp"
+                    android:elevation="1dp" />
+            </TableRow>
+
+        </TableLayout>
+
+</LinearLayout>

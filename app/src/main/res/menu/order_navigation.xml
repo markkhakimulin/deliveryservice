@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.ff.deliveryservice.OrderNavigationActivity">
+    <item android:id="@+id/action_search"
+        android:title="@string/abc_search_hint"
+        app:showAsAction="collapseActionView|always"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        android:icon="?android:attr/actionModeWebSearchDrawable"/>
+
+
+    <item
+        android:id="@+id/action_log_out"
+        android:orderInCategory="777"
+        android:title="@string/action_logout"
+        app:showAsAction="never" />
+</menu>

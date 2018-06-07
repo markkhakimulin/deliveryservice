@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:descendantFocusability="blocksDescendants"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:layoutMode="clipBounds"
+        android:id="@+id/row_item_name">
+
+        <TextView
+            android:id="@+id/item_row_description_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/padding_left"
+            android:singleLine="true"
+            android:text="TextView"
+            android:textAlignment="textStart"
+            android:textSize="14sp"
+            android:textStyle="normal|bold" />
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="?attr/dividerVertical"
+        android:id="@+id/row_item_numbers"
+        android:layout_below="@+id/row_item_name"
+        android:gravity="right">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/item_id"
+            android:paddingLeft="@dimen/padding"
+            android:paddingRight="@dimen/padding"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/item_row_discount_view"
+            android:width="80dp"
+            android:paddingRight="@dimen/padding"
+            android:paddingLeft="@dimen/padding" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/item_row_cost_view"
+            android:width="80dp"
+            android:paddingRight="@dimen/padding"
+            android:paddingLeft="@dimen/padding" />
+
+        <TextView
+            android:id="@+id/item_row_count_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="30dp"
+            android:paddingLeft="@dimen/padding"
+            android:paddingRight="@dimen/padding" />
+    </TableRow>
+</RelativeLayout>
+
