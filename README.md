@@ -4,3 +4,5 @@ https://android.jlelse.eu/dagger-2-part-i-basic-principles-graph-dependencies-sc
 and video tutorial in 2 parts
 https://www.youtube.com/watch?v=c0BMD30dbxE
 https://www.youtube.com/watch?v=cW4GfV8emIE&t=16s
+
+https://github.com/sgzsh269/android-mvp-with-dagger2
