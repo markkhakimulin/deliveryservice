@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.ff.deliveryservice.OrderNavigationActivity">
+    tools:context="com.ff.deliveryservice.modules.navigation.OrderNavigationActivity">
     <item
         android:id="@+id/menu_delete"
         android:title="@string/navigation_action_mode_clear"

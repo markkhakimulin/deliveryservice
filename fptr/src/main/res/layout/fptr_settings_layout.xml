@@ -4,30 +4,6 @@
               android:layout_height="fill_parent"
               android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:text="Настройки ККТ"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-
-
-    <ImageView
-        android:id="@+id/imgDivider"
-        android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:background="@android:color/darker_gray"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:paddingBottom="2dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingTop="2dp"
-        android:scaleType="fitXY"/>
 
     <Button
         android:id="@+id/setup_button"

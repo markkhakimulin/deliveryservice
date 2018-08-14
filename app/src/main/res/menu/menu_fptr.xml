@@ -13,6 +13,11 @@
     <item
         android:id="@+id/action_check_unsent_data_ofd"
         android:orderInCategory="120"
+        android:title="@string/action_status_ofd"
+        app:showAsAction="" />
+    <item
+        android:id="@+id/action_ofd_report"
+        android:orderInCategory="130"
         android:title="@string/action_check_unsent_data_ofd"
         app:showAsAction="" />
     <item

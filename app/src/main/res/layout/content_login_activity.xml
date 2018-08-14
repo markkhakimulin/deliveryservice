@@ -7,7 +7,7 @@
     android:fitsSystemWindows="false"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.ff.deliveryservice.LoginActivity"
+    tools:context="com.ff.deliveryservice.modules.login.LoginActivity"
     tools:showIn="@layout/activity_login">
 
     <ProgressBar
@@ -42,13 +42,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:elevation="1dp"
-                    android:hint="@string/refresh_login"
-                    android:imeActionId="@+id/login"
-                    android:imeActionLabel="@string/action_sign_in_short"
-                    android:inputType="textAutoComplete"
-                    android:singleLine="false"
-                    android:textAlignment="textStart" />
+                    android:imeOptions="flagForceAscii"
+                    android:inputType="text" />
 
                 <ImageButton
                     android:id="@+id/barcodeButton"
@@ -64,7 +59,6 @@
                     android:labelFor="@+id/login"
                     android:minHeight="24dp"
                     android:scaleType="fitStart"
-                    android:src="@mipmap/barcode"
                     app:srcCompat="@mipmap/qrcode" />
             </TableRow>
 

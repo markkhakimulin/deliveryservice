@@ -4,23 +4,29 @@
     package="com.ff.deliveryservice">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_PRIVILEGED"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
+        android:name=".application.DeliveryServiceApplication"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:name=".modules.splash.MainActivity"
             android:screenOrientation="locked"
-            android:allowBackup="true">
+            android:theme="@style/SplashTheme">
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,18 +34,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoadingActivity"
-            android:label="LoadingActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".LoginActivity" />
-            <meta-data
-                android:name="android.support.UI_OPTIONS"
-                android:value="splitActionBarWhenNarrow" />
-        </activity>
+            android:name=".modules.login.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:screenOrientation="locked"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".OrderNavigationActivity"
+            android:name=".modules.navigation.OrderNavigationActivity"
             android:label="@string/title_activity_order_navigation"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="locked">
@@ -48,34 +48,48 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".LoginActivity" />
+                android:value=".modules.login.LoginActivity" />
         </activity>
         <activity
-            android:name=".OrderDetailsActivity"
+            android:name=".modules.signin.SignInActivity"
+            android:label="LoadingActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".modules.login.LoginActivity" />
+            <meta-data
+                android:name="android.support.UI_OPTIONS"
+                android:value="splitActionBarWhenNarrow" />
+        </activity>
+
+        <!--<activity
+            android:name=".modules.details.OrderDetailsActivity"
             android:label="@string/title_activity_order_details"
-            android:parentActivityName=".OrderNavigationActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".modules.navigation.OrderNavigationActivity"
             android:screenOrientation="locked"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.UI_OPTIONS"
                 android:value="splitActionBarWhenNarrow" />
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".OrderNavigationActivity" />
-        </activity>
+                android:value=".modules.navigation.OrderNavigationActivity" />
+        </activity>-->
         <activity
-            android:name=".FullScannerResultActivity"
+            android:name=".modules.scanner.FullScannerResultActivity"
             android:label="@string/scanner_activity"
+            android:screenOrientation="locked"
             android:theme="@style/AppOverlayTheme"
-            android:uiOptions="splitActionBarWhenNarrow"
-            android:screenOrientation="locked">
+            android:uiOptions="splitActionBarWhenNarrow">
             <meta-data
                 android:name="android.support.UI_OPTIONS"
                 android:value="splitActionBarWhenNarrow" />
         </activity>
-        <activity
-            android:name=".FPTRSettingsActivity"/>
+
+        <service
+            android:name=".modules.fptr.FPTRService"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.ff.deliveryservice.OrderNavigationActivity">
+    tools:context="com.ff.deliveryservice.modules.navigation.OrderNavigationActivity">
 
     <include layout="@layout/content_order_navigation" />
 

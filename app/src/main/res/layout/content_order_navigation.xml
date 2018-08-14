@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.ff.deliveryservice.OrderNavigationActivity"
+    tools:context="com.ff.deliveryservice.modules.navigation.OrderNavigationActivity"
     tools:showIn="@layout/app_bar_order_navigation">
     <ProgressBar
         android:id="@+id/orders_progress"

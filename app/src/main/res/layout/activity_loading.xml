@@ -10,7 +10,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.ff.deliveryservice.LoadingActivity">
+    tools:context="com.ff.deliveryservice.loading.mvp.LoadingActivity">
     <ProgressBar
         android:id="@+id/progress"
         style="?android:attr/progressBarStyleLarge"

@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.ff.deliveryservice.OrderDetailsActivity">
+    tools:context="com.ff.deliveryservice.modules.details.OrderDetailsActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"

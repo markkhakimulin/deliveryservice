@@ -83,6 +83,10 @@
     <string name="order_detail_order_remainder">Get a remainder</string>
     <string name="order_detail_mix_pay">Mix pay</string>
     <string name="order_detail_map_loading">Map loading</string>
+    <string name="order_detail_cash_income_document">Cash income was built.
+        You have to repeat operation!</string>
+    <string name="order_detail_ofd_send_process">Its sending documents to ofd now.
+        You have to repeat operation!</string>
 
     <!-- Strings related to order list -->
     <string name="order_list_empty_refresh">Swipe to refresh</string>
@@ -93,8 +97,9 @@
     <string name="prompt_email">Email</string>
     <string name="title_activity_order_detail">OrderDetail</string>
     <string name="action_settings">Settings CCM</string>
-    <string name="action_check">Check CCM</string>
+    <string name="action_check">Check connect CCM</string>
     <string name="action_check_unsent_data_ofd">Diagnostic OFD</string>
+    <string name="action_status_ofd">Status OFD</string>
     <string name="action_process_cheque">Process cheque complete</string>
     <string name="action_about">About</string>
     <string name="title_about_app">About app</string>
@@ -102,7 +107,7 @@
     <string name="action_z_report">Z report</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_logout">Log out</string>
-    <string name="title_activity_order_navigation">OrderNavigationActivity</string>
+    <string name="title_activity_order_navigation">Order filters</string>
     <!-- Strings related to navigation -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -156,12 +161,18 @@
     <!-- Strings fptr settings-->
     <string name="fptr_settings_loading">Loading settings</string>
     <string name="fptr_settings_set_user">Set user</string>
+    <string name="fptr_settings_set_settings">Set settings</string>
     <string name="fptr_settings_set_connection">Set connection</string>
     <string name="fptr_settings_check_connection">Check connection</string>
-    <string name="fptr_settings_set_z_report">Установка режима отчета с гашением</string>
-    <string name="fptr_settings_set_x_report">установка режима отчета без гашения</string>
+    <string name="fptr_settings_check_ofd_state">Check OFD state</string>
+    <string name="fptr_settings_report_OFD">Print OFD report</string>
+    <string name="fptr_settings_check_battery_state">Check battery state</string>
+    <string name="fptr_settings_set_z_report">Печать отчета с гашением</string>
+    <string name="fptr_settings_set_x_report">Печать отчета без гашения</string>
+    <string name="fptr_settings_set_operator">установка кассира</string>
     <string name="fptr_settings_cancel_cheque">Cancel cheque</string>
     <string name="fptr_settings_report">Report output</string>
+    <string name="fptr_settings_check_document_closed">Check document closed</string>
     <string name="fptr_settings_ok">OK</string>
     <string name="fptr_settings_open_cheque">Open cheque</string>
     <string name="fptr_settings_close_cheque">Close cheque</string>
@@ -182,10 +193,13 @@
         Необходимо выбрать нужную ККТ вручную в разделе 'Устройство'"</string>
 
     <!-- Strings soap settings-->
-    <string name="soap_error_order_pack">Sync get orders error</string>
-    <string name="soap_error_order_changes">Sync put orders error</string>
+    <string name="soap_error_order_pack">Sync get orders status</string>
+    <string name="soap_error_order_changes">Sync put orders status</string>
 
     <bool name="cameraPreviewShouldFillView">true</bool>
+
+    <string name="db_error_open_for_reading">Не удалось открыть БД для чтения</string>
+    <string name="db_error_open_for_writing">Не удалось открыть БД для записи</string>
 
     <string-array name="notification_types">
         <item>None</item>

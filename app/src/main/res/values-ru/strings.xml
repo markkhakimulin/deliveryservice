@@ -83,6 +83,10 @@
     <string name="order_detail_order_remainder">Получить остаток</string>
     <string name="order_detail_mix_pay">Смешанная</string>
     <string name="order_detail_map_loading">Загрузка карты</string>
+    <string name="order_detail_cash_income_document">Было сделано автоматическое внесение денег в кассу.
+        Необходимо повторить операцию еще раз!</string>
+    <string name="order_detail_ofd_send_process">Идет отправка документов в ОФД.
+        Необходимо повторить операцию позже!</string>
     <!-- Strings related to order list -->
     <string name="order_list_empty_refresh">Проведите по экрану, чтобы обновить</string>
     <string name="orders_uploaded">Заказы выгружены</string>
@@ -92,8 +96,9 @@
     <string name="prompt_email">Email</string>
     <string name="title_activity_order_detail">Детали заказа</string>
     <string name="action_settings">Настройки ККМ</string>
-    <string name="action_check">Проверить ККМ</string>
+    <string name="action_check">Проверить связь с ККМ</string>
     <string name="action_check_unsent_data_ofd">Диагностика ОФД</string>
+    <string name="action_status_ofd">Состояние с ОФД</string>
     <string name="action_process_cheque">Обработка пробития чека</string>
     <string name="action_about">Информация</string>
     <string name="title_about_app">Версия приложения</string>
@@ -154,12 +159,18 @@
     <!-- Strings fptr settings-->
     <string name="fptr_settings_loading">Загрузка настроек</string>
     <string name="fptr_settings_set_user">Установка кассира</string>
+    <string name="fptr_settings_set_settings">Установка настроек</string>
     <string name="fptr_settings_set_connection">Установка соединения</string>
     <string name="fptr_settings_check_connection">Проверка связи</string>
-    <string name="fptr_settings_set_z_report">Установка режима отчета с гашением</string>
-    <string name="fptr_settings_set_x_report">установка режима отчета без гашения</string>
+    <string name="fptr_settings_check_ofd_state">Проверка состояния с ОФД</string>
+    <string name="fptr_settings_report_OFD">Печать отчета диагностики с ОФД</string>
+    <string name="fptr_settings_check_battery_state">Проверка состояния батареи</string>
+    <string name="fptr_settings_set_z_report">Печать отчета с гашением</string>
+    <string name="fptr_settings_set_x_report">Печать отчета без гашения</string>
+    <string name="fptr_settings_set_operator">установка кассира</string>
     <string name="fptr_settings_cancel_cheque">Отмена чека</string>
     <string name="fptr_settings_report">Вывод отчета</string>
+    <string name="fptr_settings_check_document_closed">Проверка завершения документа</string>
     <string name="fptr_settings_ok">OK</string>
     <string name="fptr_settings_open_cheque">Открытие фискального чека</string>
     <string name="fptr_settings_close_cheque">Закрытие фискального чека</string>
@@ -179,10 +190,11 @@
     <string name="fptr_settings_err_setup">Не удалось автоматически установить ККМ, т.к. на телефоне подключено более одного устройства.
         Необходимо выбрать нужную ККТ вручную в разделе 'Устройство'"</string>
     <!-- Strings soap settings-->
-    <string name="soap_error_order_pack">Ошибка синхронизации заказов</string>
-    <string name="soap_error_order_changes">Ошибка выгрузки заказов</string>
+    <string name="soap_error_order_pack">Состояние синхронизации заказов</string>
+    <string name="soap_error_order_changes">Состояние выгрузки заказов</string>
 
-
+    <string name="db_error_open_for_reading">Не удалось открыть БД для чтения</string>
+    <string name="db_error_open_for_writing">Не удалось открыть БД для записи</string>
 
     <string-array name="notification_types">
         <item>Не уведомлять</item>
