@@ -5,15 +5,18 @@ import android.content.Context;
 
 import com.ff.deliveryservice.di.components.ApplicationComponent;
 import com.ff.deliveryservice.di.components.DaggerApplicationComponent;
+import com.ff.deliveryservice.di.components.DetailsComponent;
 import com.ff.deliveryservice.di.components.LoginComponent;
 import com.ff.deliveryservice.di.components.NavigationComponent;
 import com.ff.deliveryservice.di.components.SignInComponent;
 import com.ff.deliveryservice.di.module.ApplicationModule;
+import com.ff.deliveryservice.di.module.DetailsModule;
 import com.ff.deliveryservice.di.module.LoginModule;
 import com.ff.deliveryservice.di.module.NavigationModule;
 import com.ff.deliveryservice.di.module.SignInModule;
 import com.ff.deliveryservice.mvp.view.FPTRView;
 import com.ff.deliveryservice.mvp.view.LoginView;
+import com.ff.deliveryservice.mvp.view.OrderDetailsView;
 import com.ff.deliveryservice.mvp.view.OrderNavigationView;
 import com.ff.deliveryservice.mvp.view.SignInView;
 
@@ -27,6 +30,7 @@ public class DeliveryServiceApplication extends Application {
     private static LoginComponent loginComponent;
     private static SignInComponent siComponent;
     private static NavigationComponent navComponent;
+    private static DetailsComponent detailsComponent;
 
     private static Context context;
 
@@ -81,6 +85,22 @@ public class DeliveryServiceApplication extends Application {
     public static void destroyNavigationComponent() {
         navComponent = null;
     }
+
+
+    public static DetailsComponent initDetailsComponent(OrderDetailsView view, String userId,String codeId,String orderId) {
+
+        detailsComponent =  appComponent.plus(new DetailsModule(view,orderId,codeId,userId));
+        return detailsComponent;
+    }
+
+    public static DetailsComponent getDetailsComponent() {
+        return detailsComponent;
+    }
+
+    public static void destroyDetailsComponent() {
+        detailsComponent = null;
+    }
+
 
     public static Context getContext() {
         return context;

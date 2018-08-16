@@ -12,7 +12,7 @@ public interface OnFragmentHandler {
     void onCheckTypeChoosed(int checkType);
     void onPaymentTypeChoosed(Map<Integer, Double> map, int checkType);
     void onCancel();
-    void onEditPaymentComplete();
-    void showProgressDialog(String title);
-    void hideProgressDialog();
+    void onChangePaymentValue(int paymentType,double summ);
+    //void showProgressDialog(String title);
+    //void hideProgressDialog();
 }

@@ -43,6 +43,7 @@ import android.widget.Toast;
 
 import com.ff.deliveryservice.R;
 import com.ff.deliveryservice.application.DeliveryServiceApplication;
+import com.ff.deliveryservice.modules.details.OrderDetailsActivity;
 import com.ff.deliveryservice.modules.fptr.FPTRActivity;
 import com.ff.deliveryservice.modules.login.LoginActivity;
 import com.ff.deliveryservice.modules.navigation.adapter.OrderAdapter;
@@ -148,13 +149,13 @@ public class OrderNavigationActivity extends FPTRActivity implements
                     onShowToast(getString(R.string.error_cant_find_order));
                     return;
                 }
-                /*Intent intent = new Intent(OrderNavigationActivity.this, OrderDetailsActivity.class);
+                Intent intent = new Intent(OrderNavigationActivity.this, OrderDetailsActivity.class);
                 intent.putExtra(DBHelper.CN_ORDER_ID, cursor.getString(cursor.getColumnIndex(DBHelper.CN_ID)));
                 intent.putExtra(DBHelper.CN_CODE, cursor.getString(cursor.getColumnIndex(DBHelper.CN_CODE)));
                 intent.putExtra(DBHelper.CN_ID, loginId);
                 intent.putExtra(DBHelper.CN_DESCRIPTION, loginDesc);
 
-                startActivity(intent);*/
+                startActivity(intent);
 
             }
         });
@@ -497,5 +498,6 @@ public class OrderNavigationActivity extends FPTRActivity implements
         super.onDestroy();
         DeliveryServiceApplication.destroyNavigationComponent();
     }
+
 }
 

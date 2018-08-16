@@ -5,13 +5,19 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.text.TextUtils;
 
 import com.ff.deliveryservice.R;
+import com.ff.deliveryservice.application.DeliveryServiceApplication;
 import com.ff.deliveryservice.common.Constants;
+import com.ff.deliveryservice.mvp.model.ChequeData;
+import com.ff.deliveryservice.mvp.model.DBHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.inject.Inject;
 
 import ru.atol.drivers10.fptr.Fptr;
 import ru.atol.drivers10.fptr.IFptr;
@@ -30,6 +36,12 @@ import static ru.atol.drivers10.fptr.IFptr.LIBFPTR_PARAM_DOCUMENT_PRINTED;
 public class FPTRService extends IntentService {
 
 
+    @Inject
+    protected DBHelper db;
+
+    @Inject
+    protected Resources res;
+
     HashMap<Byte,String> ofd_exchange_status = new HashMap<> ();
 
     public static final String ACTION_CHECK_CONNECT_REQUEST = "com.ff.deliveryservice.service.action.CHECK_CONNECT_REQUEST";
@@ -38,6 +50,7 @@ public class FPTRService extends IntentService {
     public static final String ACTION_BATTERY_STATE_REQUEST = "com.ff.deliveryservice.service.action.BATTERY_STATE_REQUEST";
     public static final String ACTION_X_REPORT_REQUEST = "com.ff.deliveryservice.service.action.X_REPORT_REQUEST";
     public static final String ACTION_Z_REPORT_REQUEST = "com.ff.deliveryservice.service.action.Z_REPORT_REQUEST";
+    public static final String ACTION_PAYMENT_REQUEST = "com.ff.deliveryservice.service.action.PAYMENT_REQUEST";
 
     // from service to activity
 
@@ -48,6 +61,7 @@ public class FPTRService extends IntentService {
     public static final String ACTION_BATTERY_STATE_RESPONSE = "com.ff.deliveryservice.service.action.BATTERY_STATE_RESPONSE";
     public static final String ACTION_X_REPORT_RESPONSE = "com.ff.deliveryservice.service.action.X_REPORT_RESPONSE";
     public static final String ACTION_Z_REPORT_RESPONSE = "com.ff.deliveryservice.service.action.Z_REPORT_RESPONSE";
+    public static final String ACTION_PAYMENT_RESPONSE = "com.ff.deliveryservice.service.action.PAYMENT_RESPONSE";
 
     //progress
     public static final String EXTRA_PROGRESS = "com.ff.deliveryservice.service.extra.PROGRESS";
@@ -80,6 +94,7 @@ public class FPTRService extends IntentService {
     byte status5 = 16;
     byte status6 = 32;
 
+    @Inject
     public FPTRService() {
         this("FPTRService");
 
@@ -105,6 +120,10 @@ public class FPTRService extends IntentService {
         ofd_exchange_status.put(status6,"ожидание ответа на команду от ОФД");
 
         super.onCreate();
+
+        DeliveryServiceApplication.getApplicationComponent().inject(this);
+
+
     }
 
     protected Intent getResponseIntent(String action,int progress,int max,String message,Boolean result) {
@@ -184,7 +203,7 @@ public class FPTRService extends IntentService {
     }
 
     public static class DriverException extends Exception {
-        DriverException(String msg) {
+        public DriverException(String msg) {
             super(msg);
         }
     }
@@ -216,10 +235,46 @@ public class FPTRService extends IntentService {
                 handleActionReportZ(userName,userINN);
             }else if (ACTION_OFD_REPORT_REQUEST.equals(action)) {
                 handleActionReportOFD();
+            } else if (ACTION_OFD_REPORT_REQUEST.equals(action)) {
+                ChequeData chequeData = intent.getParcelableExtra(ChequeData.class.getCanonicalName());
+                handleActionPayment(chequeData);
             }
         }
 
     }
+
+    private void handleActionPayment(ChequeData chequeData) {
+
+       /* mPaymentTypeCode = chequeData.getPaymentsType();
+        mChequeType = chequeData.getChequeType();
+        isReturnCheque = mChequeType == IFptr.LIBFPTR_RT_SELL_RETURN;
+        mNotification = chequeData.getmNotification();*/
+
+        errorMessage = "";
+        try {
+
+            if (fptr == null) {
+                throw new DriverException("Не инициализирован драйвер устройства");
+            }
+            sendBroadcast(getResponseIntent(ACTION_CHECK_CONNECT_RESPONSE,1,4,getString(R.string.fptr_settings_set_settings),true));
+            fptr.setSettings(getSettings());
+
+            sendBroadcast(getResponseIntent(ACTION_CHECK_CONNECT_RESPONSE,2,4,getString(R.string.fptr_settings_set_connection),true));
+            if (fptr.open() < 0) {
+                checkError();
+            }
+            sendBroadcast(getResponseIntent(ACTION_CHECK_CONNECT_RESPONSE,3,4,getString(R.string.fptr_settings_check_connection),true));
+            if (!fptr.isOpened()) {
+                checkError();
+            }
+            sendBroadcast(getResponseIntent(ACTION_CHECK_CONNECT_RESPONSE,4,4,getString(R.string.fptr_settings_ok),true));
+
+        } catch (DriverException e) {
+            errorMessage = e.getMessage();
+            sendBroadcast(getResponseIntent(ACTION_CHECK_CONNECT_RESPONSE,0,0,errorMessage,false));
+        }
+    }
+
 
     private void handleActionCheckConnect() {
 

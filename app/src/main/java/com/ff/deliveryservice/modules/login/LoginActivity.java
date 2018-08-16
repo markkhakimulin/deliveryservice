@@ -322,7 +322,7 @@ public class LoginActivity extends FPTRActivity implements LoginView {
 
     @Override
     public void onShowDialog(String message) {
-        showYesNoMessageDialog("",message,null);
+        showYesNoMessageDialog(message,null);
     }
 
     @Override

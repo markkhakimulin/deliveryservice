@@ -1,5 +1,6 @@
 package com.ff.deliveryservice.modules.details.dialogs;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,7 +19,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.atol.drivers.fptr.IFptr;
 import com.ff.deliveryservice.mvp.model.DBHelper;
 import com.ff.deliveryservice.R;
 import com.ff.deliveryservice.modules.details.fragments.OnFragmentHandler;
@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import ru.atol.drivers10.fptr.IFptr;
 
 public class SimpleListPaymentDialog extends DialogFragment implements DialogInterface.OnCancelListener{
 
@@ -48,6 +50,7 @@ public class SimpleListPaymentDialog extends DialogFragment implements DialogInt
         fragment.mSumToPay = sumToPay;
         return fragment;
     }
+    @SuppressLint("SetTextI18n")
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -111,7 +114,7 @@ public class SimpleListPaymentDialog extends DialogFragment implements DialogInt
         List<String> names = new ArrayList<>();
         //Если количество больше одного значит была смешанная оплата.
         //Актуально только если это чек возврата на полную сумму.
-        if (mCursor.getCount() > 1 && mCheckType == IFptr.CHEQUE_TYPE_RETURN) {
+        if (mCursor.getCount() > 1 && mCheckType == IFptr.LIBFPTR_RT_SELL_RETURN) {
 
 
 

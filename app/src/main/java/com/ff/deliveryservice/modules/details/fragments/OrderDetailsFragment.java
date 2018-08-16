@@ -1,5 +1,6 @@
 package com.ff.deliveryservice.modules.details.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -7,12 +8,16 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.ff.deliveryservice.application.DeliveryServiceApplication;
+import com.ff.deliveryservice.base.BaseFragment;
 import com.ff.deliveryservice.mvp.model.DBHelper;
 import com.ff.deliveryservice.R;
 
@@ -20,18 +25,46 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
-public class OrderDetailsFragment extends Fragment {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class OrderDetailsFragment extends BaseFragment {
 
     public static OrderDetailsFragment fragment;
-    public TextView mCode,mId,mCustomer,mDate,mTime,mPhone,mAddress,mComment,mStatus,mRefuseReason;
+    @BindView(R.id.order_detail_code_view)
+    public TextView mCode;
+    @BindView(R.id.order_detail_id_view)
+    public TextView mId;
+    @BindView(R.id.order_detail_customer_view)
+    public TextView mCustomer;
+    @BindView(R.id.order_detail_date_view)
+    public TextView mDate;
+    @BindView(R.id.order_detail_time_view)
+    public TextView mTime;
+    @BindView(R.id.order_detail_phone_view)
+    public TextView mPhone;
+    @BindView(R.id.order_detail_address_view)
+    public TextView mAddress;
+    @BindView(R.id.order_detail_comment_view)
+    public TextView mComment;
+    @BindView(R.id.order_detail_status_view)
+    public TextView mStatus;
+    @BindView(R.id.order_detail_refuse_reason_view)
+    public TextView mRefuseReason;
+    @BindView(R.id.order_details_button_cancel)
     public Button cancelButton;
+    @BindView(R.id.order_details_button_map)
+    public Button mapButton;
+
+
     public OnFragmentHandler mFragmentCreatedHandler;
-    private Button mapButton;
 
     public OrderDetailsFragment() {}
 
+
     public void updateCursor(Cursor cursor) {
 
+        //super.updateCursor(cursor);
         if (cursor.moveToFirst()) {
             mCode.setText(cursor.getString(cursor.getColumnIndex(DBHelper.CN_CODE)));
             mId.setText(cursor.getString(cursor.getColumnIndex(DBHelper.CN_ID)));
@@ -68,7 +101,9 @@ public class OrderDetailsFragment extends Fragment {
                     List<ResolveInfo> activities = packageManager.queryIntentActivities(intent, 0);
                     boolean isIntentSafe = activities.size() > 0;
                     if (isIntentSafe) {
-                        mFragmentCreatedHandler.showProgressDialog(getString(R.string.order_detail_map_loading));
+
+                        onShowDialog(getString(R.string.order_detail_map_loading));
+                        //mFragmentCreatedHandler.showProgressDialog(getString(R.string.order_detail_map_loading));
                         startActivity(intent);
                     }else {
                         intent = new Intent(Intent.ACTION_VIEW);
@@ -78,6 +113,11 @@ public class OrderDetailsFragment extends Fragment {
                 }
             });
         }
+    }
+
+    @Override
+    protected CursorAdapter getNewCursorAdapter(Cursor cursor) {
+        return null;
     }
 
     /**
@@ -95,19 +135,7 @@ public class OrderDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_order_details, container, false);
-        mStatus = (TextView) rootView.findViewById(R.id.order_detail_status_view);
-        mCode = (TextView) rootView.findViewById(R.id.order_detail_code_view);
-        mId = (TextView) rootView.findViewById(R.id.order_detail_id_view);
-        mCustomer = (TextView) rootView.findViewById(R.id.order_detail_customer_view);
-        mDate = (TextView) rootView.findViewById(R.id.order_detail_date_view);
-        mTime = (TextView) rootView.findViewById(R.id.order_detail_time_view);
-        mPhone = (TextView) rootView.findViewById(R.id.order_detail_phone_view);
-        mAddress = (TextView) rootView.findViewById(R.id.order_detail_address_view);
-        mComment = (TextView) rootView.findViewById(R.id.order_detail_comment_view);
-        mRefuseReason = (TextView) rootView.findViewById(R.id.order_detail_refuse_reason_view);
-        cancelButton = (Button) rootView.findViewById(R.id.order_details_button_cancel);
-        mapButton = (Button) rootView.findViewById(R.id.order_details_button_map);
-
+        ButterKnife.bind(this, rootView);
         return rootView;
     }
     @Override

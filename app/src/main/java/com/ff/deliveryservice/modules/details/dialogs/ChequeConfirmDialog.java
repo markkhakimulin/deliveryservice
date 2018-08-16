@@ -25,6 +25,8 @@ import com.ff.deliveryservice.modules.details.fragments.OnFragmentHandler;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 public class ChequeConfirmDialog extends DialogFragment implements DialogInterface.OnCancelListener{
 
     public static ChequeConfirmDialog fragment;
@@ -35,13 +37,16 @@ public class ChequeConfirmDialog extends DialogFragment implements DialogInterfa
     private double mSumm = 0,mDiscount = 0;
     private String mNotification = null,orderId;
 
+    @Inject
+    DBHelper dbHelper;
+
+    @Inject
     public ChequeConfirmDialog() {}
 
 
-    public String getlChequeDescription() {
+    public String getChequeDescription() {
 
-        SQLiteOpenHelper sqLiteOpenHelper = DBHelper.getOpenHelper(getActivity());
-        SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         String descriprion = "";
         Cursor cursor = db.rawQuery(String.format("select description from check_types where code = ?"),  new String[] {Integer.toString(mCheckType)});
@@ -97,18 +102,18 @@ public class ChequeConfirmDialog extends DialogFragment implements DialogInterfa
             }
         });
         TextView commonSumm = (TextView) view.findViewById(R.id.common_summ);
-        SQLiteOpenHelper sqLiteOpenHelper = DBHelper.getOpenHelper(getActivity());
-        SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
-        commonSumm.setText(commonSumm.getText() +Double.toString(OrderDetailsActivity.getSumToPay(db,mCheckType))+getString(R.string.currency));
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        commonSumm.setText(commonSumm.getText() +Double.toString(dbHelper.getSumToPay(db,mCheckType,orderId))+getString(R.string.currency));
         TextView commonChequeDescription = (TextView) view.findViewById(R.id.common_payment_description);
-        commonChequeDescription.setText(getlChequeDescription());
+        commonChequeDescription.setText(getChequeDescription());
 
         Spinner notificationSpinner = (Spinner) view.findViewById(R.id.notification);
         notificationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SQLiteOpenHelper sqLiteOpenHelper = DBHelper.getOpenHelper(getActivity());
-                SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
+
+                SQLiteDatabase db = dbHelper.getReadableDatabase();
 
                 //тут записываем текущее состояние счетчиков чеков ккм
                 if (position == 1) {

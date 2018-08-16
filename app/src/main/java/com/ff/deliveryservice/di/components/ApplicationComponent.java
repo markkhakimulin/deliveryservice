@@ -1,9 +1,11 @@
 package com.ff.deliveryservice.di.components;
 
+import com.ff.deliveryservice.di.module.DetailsModule;
 import com.ff.deliveryservice.di.module.LoginModule;
 import com.ff.deliveryservice.di.module.NavigationModule;
 import com.ff.deliveryservice.di.module.SignInModule;
 import com.ff.deliveryservice.modules.fptr.FPTRActivity;
+import com.ff.deliveryservice.modules.fptr.FPTRService;
 import com.ff.deliveryservice.modules.splash.MainActivity;
 import com.ff.deliveryservice.di.module.ApplicationModule;
 
@@ -34,14 +36,18 @@ public interface ApplicationComponent {
     //Resources exposeResources();
     //SharedPreferences exposeSharedPrefs();
     //DBHelper exposeDBHelper();
-    //FPTRPresenter exposeFptrService();
+    FPTRService exposeFptrService();
 
     void inject(MainActivity mainActivity);
     void inject(FPTRActivity activity);
+    void inject(FPTRService service);
 
     LoginComponent plus(LoginModule listModule);
     SignInComponent plus(SignInModule listModule);
     NavigationComponent plus(NavigationModule listModule);
+    DetailsComponent plus(DetailsModule detailsModule);
+
+
 
 
 }

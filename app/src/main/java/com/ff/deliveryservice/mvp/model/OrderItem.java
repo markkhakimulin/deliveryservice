@@ -7,10 +7,15 @@ import android.os.Parcelable;
  * Created by Mark Khakimulin on 13.08.2018.
  * mark.khakimulin@gmail.com
  */
-public class OrderItem extends BaseData implements Parcelable{
+public class OrderItem extends BaseData{
 
     private float mPrice;
     private int mQuantity;
+
+    public OrderItem() {
+        super();
+
+    }
 
     public OrderItem(String id, String title,float price,int quantity) {
         super(id, title);
@@ -18,11 +23,11 @@ public class OrderItem extends BaseData implements Parcelable{
         mQuantity = quantity;
     }
 
-    public float getmPrice() {
+    public float getPrice() {
         return mPrice;
     }
 
-    public int getmQuantity() {
+    public int getQuantity() {
         return mQuantity;
     }
 
@@ -47,13 +52,16 @@ public class OrderItem extends BaseData implements Parcelable{
 
         dest.writeString(getId());
         dest.writeString(getDescription());
-        dest.writeInt(getmQuantity());
-        dest.writeFloat(getmPrice());
+        dest.writeInt(getQuantity());
+        dest.writeFloat(getPrice());
 
     }
 
     private OrderItem(Parcel parcel) {
-
+        mId = parcel.readString();
+        mDescription = parcel.readString();
+        mQuantity = parcel.readInt();
+        mPrice = parcel.readFloat();
     }
 
 

@@ -234,5 +234,38 @@ public class DBHelper extends SQLiteOpenHelper {
                 "where o.driver_id = ? and o.posted = 0 and op._id is null and och._id is null", new String[]{driver_id});
     }
 
+    public double getSumToPay(SQLiteDatabase db,int checkType,String orderId) {
+
+        if (db == null) {
+            return 0;
+        }
+        double sum = 0;
+        Cursor cursor = null;
+        if (checkType == IFptr.LIBFPTR_RT_SELL) {//проверяем если уже был платеж то если дозаказали товар
+            cursor = db.rawQuery(String.format("select tp.topay - ifnull(op.paid,0) sum " +
+                    "from " +
+                    "(select sum(count * (cost - discount)) topay,order_id  from order_items " +
+                    "where order_id = ? and checked = 1) tp  " +
+                    "left join " +
+                    "(select sum(p.paid) paid,p.order_id from " +
+                    "(select case when check_type = 1 then sum - ifnull(discount,0) else -(sum - ifnull(discount,0)) end paid,order_id from order_payments where order_id = ?) p " +
+                    "group by p.order_id) op " +
+                    "on tp.order_id = op.order_id ") , new String[]{orderId,orderId});
+            //cursor = db.rawQuery("select sum(p.paid) paid,p.order_id from (select case when check_type = 1 then sum - ifnull(discount,0) else -(sum - ifnull(discount,0)) end paid,order_id from order_payments where order_id = ?) p group by p.order_id", new String[]{ orderId});
+        }  else if (checkType == IFptr.LIBFPTR_RT_SELL_RETURN) {
+            cursor = db.rawQuery(String.format("select tp.topay sum " +
+                    "from " +
+                    "(select sum(count * (cost - discount)) topay from order_items " +
+                    "where order_id = ? and checked = 1 ) as tp"), new String[]{ orderId});
+        }
+
+
+        while (cursor.moveToNext()) {
+            sum += cursor.getDouble(cursor.getColumnIndex(DBHelper.CN_ORDER_PAYMENT_SUM));
+        }
+        cursor.close();
+        return sum;
+    }
+
 
 }

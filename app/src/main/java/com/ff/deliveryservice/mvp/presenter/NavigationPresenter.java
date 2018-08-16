@@ -219,7 +219,7 @@ public class NavigationPresenter extends BasePresenter<OrderNavigationView> impl
                                 refresh();
                                 return null;
                             }
-                        });
+                        },null);
                 }
             }
         }).execute();
@@ -625,7 +625,7 @@ public class NavigationPresenter extends BasePresenter<OrderNavigationView> impl
 
             } else {
 
-                getView().showYesNoMessageDialog(res.getString(R.string.soap_error_order_pack),errorMessage,null);
+                getView().showYesNoMessageDialog(res.getString(R.string.soap_error_order_pack),errorMessage,null,null);
 
             }
         }
@@ -818,7 +818,7 @@ public class NavigationPresenter extends BasePresenter<OrderNavigationView> impl
             } else {
 
                 if (mCallback == null) {
-                    getView().showYesNoMessageDialog(res.getString(R.string.soap_error_order_pack),errorMessage,null);
+                    getView().showYesNoMessageDialog(res.getString(R.string.soap_error_order_pack),errorMessage,null,null);
                 } else {
                     mCallback.onPostExecute(success,res.getString(R.string.soap_error_order_changes)+": "+errorMessage);
                 }

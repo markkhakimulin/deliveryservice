@@ -62,7 +62,7 @@
                 android:value="splitActionBarWhenNarrow" />
         </activity>
 
-        <!--<activity
+        <activity
             android:name=".modules.details.OrderDetailsActivity"
             android:label="@string/title_activity_order_details"
             android:parentActivityName=".modules.navigation.OrderNavigationActivity"
@@ -75,7 +75,8 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".modules.navigation.OrderNavigationActivity" />
-        </activity>-->
+        </activity>
+
         <activity
             android:name=".modules.scanner.FullScannerResultActivity"
             android:label="@string/scanner_activity"

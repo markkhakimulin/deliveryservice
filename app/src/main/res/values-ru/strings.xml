@@ -5,7 +5,7 @@
     <string name="alert_button_ok">OK</string>
     <string name="alert_button_yes">Да</string>
     <string name="alert_button_no">Нет</string>
-    <string name="alert_button_cancel">Отмена</string>
+    <string name="alert_button_cancel">Закрыть</string>
     <string name="alert_title_no_orders">Не найдено заказов</string>
     <string name="alert_message_no_orders">Обновить список заказов?</string>
     <string name="alert_title_confirm_changes">Подтверждение обновления</string>

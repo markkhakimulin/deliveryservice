@@ -59,21 +59,6 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         }
     }
 
-   /* protected void showDialog(String message) {
-        if (mDialog == null) {
-            mDialog = new Dialog(this);
-            mDialog.setCancelable(true);
-        }
-        mDialog.setTitle(message);
-        mDialog.show();
-    }
-
-    protected void hideDialog() {
-        if (mDialog != null && mDialog.isShowing()) {
-            mDialog.dismiss();
-        }
-    }*/
-
     public void showProgressDialog(String title,int progress,int max) {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
@@ -107,6 +92,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         builder.setMessage(message)
                 .setTitle(title);
         //builder.setCancelable(false);
+        if (positiveCallback != null)
         builder.setPositiveButton(R.string.alert_button_yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -120,6 +106,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
                 }
             }
         });
+        if (negativeCallback != null)
         builder.setNegativeButton(R.string.alert_button_no, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -142,6 +129,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
 
         builder.create().show();
     }
+
     public void showYesNoMessageDialog(String message,@Nullable final Callable<Void> positiveCallback) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

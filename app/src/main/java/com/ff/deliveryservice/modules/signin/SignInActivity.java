@@ -6,6 +6,9 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.CallSuper;
+import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.ff.deliveryservice.R;
@@ -40,6 +43,8 @@ public class SignInActivity extends BaseActivity implements SignInView {
     @BindView(R.id.progress)
     public View mProgressView;
 
+    private String hash;
+
     @Inject
     SignInPresenter presenter;
 
@@ -50,13 +55,14 @@ public class SignInActivity extends BaseActivity implements SignInView {
     protected int getContentView() {
         return R.layout.activity_loading;
     }
+
+
     @Override
-    protected void resolveDaggerDependency() {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
 
         String id = getIntent().getStringExtra(DBHelper.CN_ID);
         String password = getIntent().getStringExtra(DBHelper.CN_PASSWORD);
 
-        String hash = id;
         try {
             hash = hash(id,password);
         } catch (NoSuchAlgorithmException e) {
@@ -65,19 +71,28 @@ public class SignInActivity extends BaseActivity implements SignInView {
             e.printStackTrace();
         }
 
-        DeliveryServiceApplication.initSignInComponent(this,hash).inject(this);
+        super.onCreate(savedInstanceState);
+    }
+
+    @CallSuper
+    protected void onViewReady(Bundle savedInstanceState, Intent intent) {
+        super.onViewReady(savedInstanceState, intent);
 
         if (!presenter.inProcess()) {
             onShowDialog("Попытка входа");
             presenter.signIn(getIntent(), new SignInPresenter.SignInCallback() {
+
                 @Override
                 public void onSignIn(Boolean success, String session) {
 
                     showProgress(false);
 
-                    Intent intent = new Intent(SignInActivity.this, OrderNavigationActivity.class);
-                    intent.fillIn(getIntent(), Intent.FILL_IN_DATA);
-                    startActivity(intent);
+                    if (success) {
+
+                        Intent intent = new Intent(SignInActivity.this, OrderNavigationActivity.class);
+                        intent.fillIn(getIntent(), Intent.FILL_IN_DATA);
+                        startActivity(intent);
+                    }
                     finish();
                 }
 
@@ -92,6 +107,11 @@ public class SignInActivity extends BaseActivity implements SignInView {
                 }
             });
         }
+    }
+
+    @Override
+    protected void resolveDaggerDependency() {
+        DeliveryServiceApplication.initSignInComponent(this,hash).inject(this);
     }
 
     public String hash(String id, String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {

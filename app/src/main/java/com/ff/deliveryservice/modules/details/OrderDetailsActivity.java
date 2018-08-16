@@ -1,37 +1,21 @@
 package com.ff.deliveryservice.modules.details;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
-import com.atol.drivers.fptr.Fptr;
-import com.atol.drivers.fptr.IFptr;
 import com.ff.deliveryservice.R;
-import com.ff.deliveryservice.modules.scanner.FullScannerResultActivity;
-import com.ff.deliveryservice.modules.scanner.SearchBarcodeCallback;
-import com.ff.deliveryservice.mvp.model.DBHelper;
-import com.ff.deliveryservice.modules.fptr.FPTRActivity;
+import com.ff.deliveryservice.application.DeliveryServiceApplication;
+import com.ff.deliveryservice.modules.details.adapter.SectionsPagerAdapter;
 import com.ff.deliveryservice.modules.details.dialogs.ChequeConfirmDialog;
 import com.ff.deliveryservice.modules.details.dialogs.SimpleListChequeTypeDialog;
 import com.ff.deliveryservice.modules.details.dialogs.SimpleListPaymentDialog;
@@ -40,15 +24,17 @@ import com.ff.deliveryservice.modules.details.fragments.OnFragmentHandler;
 import com.ff.deliveryservice.modules.details.fragments.OrderDetailsFragment;
 import com.ff.deliveryservice.modules.details.fragments.OrderItemsFragment;
 import com.ff.deliveryservice.modules.details.fragments.OrderPaymentsFragment;
+import com.ff.deliveryservice.modules.fptr.FPTRActivity;
+import com.ff.deliveryservice.modules.fptr.FPTRService;
+import com.ff.deliveryservice.modules.scanner.FullScannerResultActivity;
+import com.ff.deliveryservice.mvp.model.ChequeData;
+import com.ff.deliveryservice.mvp.model.DBHelper;
+import com.ff.deliveryservice.mvp.presenter.DetailsPresenter;
+import com.ff.deliveryservice.mvp.view.OrderDetailsView;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.Callable;
+
+import javax.inject.Inject;
 /**
  * Created by khakimulin on 22.02.2017.
  */
@@ -57,7 +43,7 @@ import java.util.concurrent.Callable;
  * A general activity to make order and payment for it.
  */
 
-public class OrderDetailsActivity extends FPTRActivity implements OnFragmentHandler {
+public class OrderDetailsActivity extends FPTRActivity implements OnFragmentHandler,OrderDetailsView {
 
     private static final int REQUEST_SHOW_SCANNER = 3;
 
@@ -65,32 +51,41 @@ public class OrderDetailsActivity extends FPTRActivity implements OnFragmentHand
     public static final String FRAGMENT_PAGE_ITEMS     = OrderItemsFragment.class.getCanonicalName();
     public static final String FRAGMENT_PAGE_PAYMENTS  = OrderPaymentsFragment.class.getCanonicalName();
 
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    //private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
-
-    private SQLiteOpenHelper sqLiteOpenHelper;
     private FloatingActionButton fab1,fab;
-    private Context activityContext;
+    private Map<Integer,Double> mPaymentTypes;
+    private int mCheckType;
+
+
+
+    @Inject
+    DetailsPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_order_details);
-        activityContext = this;
-        Intent intent = getIntent();
-        orderId = intent.getStringExtra(DBHelper.CN_ORDER_ID);
-        loginId = intent.getStringExtra(DBHelper.CN_ID);
-        numberId = intent.getStringExtra(DBHelper.CN_CODE);
-        loginDesc = intent.getStringExtra(DBHelper.CN_DESCRIPTION);
 
-        sqLiteOpenHelper = DBHelper.getOpenHelper(this);
+        orderId = getIntent().getStringExtra(DBHelper.CN_ORDER_ID);
+        loginId = getIntent().getStringExtra(DBHelper.CN_ID);
+        numberId = getIntent().getStringExtra(DBHelper.CN_CODE);
+        loginDesc = getIntent().getStringExtra(DBHelper.CN_DESCRIPTION);
+
+        super.onCreate(savedInstanceState);
+
+    }
+
+
+
+    @Override
+    protected void onViewReady(Bundle savedInstanceState, Intent intent) {
+        super.onViewReady(savedInstanceState,intent);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),this);
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), this);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -104,12 +99,14 @@ public class OrderDetailsActivity extends FPTRActivity implements OnFragmentHand
             @Override
             public void onClick(View view) {
 
-                    Intent intent = new Intent(view.getContext(), FullScannerResultActivity.class);
-                    startActivityForResult(intent,REQUEST_SHOW_SCANNER);
+                Intent intent = new Intent(view.getContext(), FullScannerResultActivity.class);
+                startActivityForResult(intent,REQUEST_SHOW_SCANNER);
             }
         });
         // Creates a new ImageView
         fab1 = (FloatingActionButton) findViewById(R.id.fab1);
+
+        //тач листенер для того чтобы можно было перетаскивать кнопку
         fab1.setOnLongClickListener(new View.OnLongClickListener() {
             @SuppressLint("ClickableViewAccessibility")
             @Override
@@ -123,15 +120,12 @@ public class OrderDetailsActivity extends FPTRActivity implements OnFragmentHand
                     public boolean onTouch(View view, MotionEvent event) {
 
                         switch (event.getAction()) {
-
-
                             case MotionEvent.ACTION_MOVE:
 
                                 if (_xDelta == 0 &&_yDelta == 0 ) {
                                     _xDelta = view.getX() - event.getRawX();
                                     _yDelta = view.getY() - event.getRawY();
                                 }
-
                                 view.animate()
                                         .x(event.getRawX() + _xDelta)
                                         .y(event.getRawY() + _yDelta)
@@ -152,17 +146,26 @@ public class OrderDetailsActivity extends FPTRActivity implements OnFragmentHand
             }
         });
 
-
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 fab1.setEnabled(false);
-                runOnUiThread(new OrderDetailsCheckType());
+                presenter.getChequeTypeList();
 
             }
         });
 
         setTitle(getString(R.string.title_activity_order_detail) +": "+ numberId);
+    }
+
+    @Override
+    protected void resolveDaggerDependency(){
+        super.resolveDaggerDependency();
+        DeliveryServiceApplication.initDetailsComponent(this,loginId,numberId,orderId).inject(this);
+    }
+    @Override
+    protected int getContentView() {
+        return R.layout.activity_order_details;
     }
 
     public void hideFabButtons() {
@@ -179,13 +182,6 @@ public class OrderDetailsActivity extends FPTRActivity implements OnFragmentHand
     }
 
     @Override
-    public void onEditPaymentComplete() {
-
-        runOnUiThread(new OrderItemPaymentCursorUpdate());//update payment list
-
-
-    }
-    @Override
     protected void onResume() {
         super.onResume();
         hideProgressDialog();
@@ -198,594 +194,140 @@ public class OrderDetailsActivity extends FPTRActivity implements OnFragmentHand
         if (requestCode == REQUEST_SHOW_SCANNER && resultCode == RESULT_OK)
         {
             String barcode = data.getStringExtra("barcode");
-            runOnUiThread(new SearchBarcode(barcode, new SearchBarcodeCallback() {
-                @Override
-                public void processCallback(int result,String reason,String barcode,Context context) {
-
-                    if (result == 0) {
-                        Toast.makeText(context, reason +" = "+barcode , Toast.LENGTH_LONG).show();
-                    } else
-                    {
-                        runOnUiThread(new OrderChanged(null));
-                        runOnUiThread(new OrderItemListCursorUpdate());//update item list
-                    }
-
-                }
-
-                @Override
-                public void lockChequeButton() {
-
-                }
-
-                @Override
-                public void unlockChequeButton() {
-
-                }
-            },this));
+            presenter.updateOrderItemByBarcode(barcode);
         }
     }
 
     @Override
     public void onFragmentViewCreated(String fragment) {
         if (fragment == FRAGMENT_PAGE_DETAILS) {
-            runOnUiThread(new OrderDetailsCursorUpdate());
+            presenter.updateOrderDetails();
         } else if (fragment == FRAGMENT_PAGE_ITEMS) {
-            runOnUiThread(new OrderItemListCursorUpdate());
+            presenter.updateOrderItems();
         } else if (fragment == FRAGMENT_PAGE_PAYMENTS) {
-            runOnUiThread(new OrderItemPaymentCursorUpdate());
+            presenter.updateOrderPayments();
         }
     }
 
+    //itmes fragment
+
     @Override
     public void onItemClicked(String itemId,String eid) {
-
-        runOnUiThread(new UpdateOrderItem(itemId,eid, new SearchBarcodeCallback() {
-            @Override
-            public void processCallback(int result, String reason, String barcode, Context context) {
-
-                if (result > 0) {
-                    runOnUiThread(new OrderChanged(null));
-                    runOnUiThread(new OrderItemListCursorUpdate());
-                } else {
-                    Toast.makeText(context,reason,Toast.LENGTH_LONG).show();
-                }
-
-            }
-
-            @Override
-            public void lockChequeButton() {
-
-            }
-
-            @Override
-            public void unlockChequeButton() {
-
-            }
-        },this));
+        presenter.updateOrderItem(itemId,eid);
     }
 
     @Override
     public void onItemLongClicked(String itemId) {
-        runOnUiThread(new UpdateOrderItemDelivery(itemId, new SearchBarcodeCallback() {
-            @Override
-            public void processCallback(int result, String reason, String barcode, Context context) {
-
-                if (result > 0) {
-                    runOnUiThread(new OrderChanged(null));
-                    runOnUiThread(new OrderItemListCursorUpdate());
-                } else {
-                    Toast.makeText(context,reason,Toast.LENGTH_LONG).show();
-                }
-
-            }
-
-            @Override
-            public void lockChequeButton() {
-
-            }
-
-            @Override
-            public void unlockChequeButton() {
-
-            }
-        },this));
+        presenter.updateOrderDeliveryItem(itemId);
     }
 
     @Override
-    public void onChequeClicked(Map<Integer,Double> map,final int checkType,String notification) {
+    public void onOrderItemUpdated() {
 
-        //showProgressDialog(getString(R.string.action_process_cheque));
-
-        AddPayment payment = new AddPayment(map,checkType,notification, new SearchBarcodeCallback() {
-            @Override
-            public void processCallback(int result, String reason, String id, Context context) {
-                if (result == 0) {
-                    Toast.makeText(context, reason, Toast.LENGTH_SHORT).show();
-                } else
-                {
-                    runOnUiThread(new OrderCompleted(checkType));
-                    runOnUiThread(new OrderItemPaymentCursorUpdate());//update payment list
-                }
-                onCancel();
-            }
-
-            @Override
-            public void lockChequeButton() {
-                fab1.setEnabled(false);
-            }
-
-            @Override
-            public void unlockChequeButton() {
-                onCancel();
-            }
-        },new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                hideProgressDialog();
-                return null;
-            }
-        });
-        payment.execute(this);
+        presenter.setOrderChanged();
+        presenter.updateOrderItems();
     }
+
+    //details fragment
 
     @Override
     public void onCancelClicked() {
-        runOnUiThread(new OrderDetailsRefuse(new SearchBarcodeCallback() {
-            @Override
-            public void processCallback(int result, String reason, String barcode, Context context) {
-                if (result == 0) {
-                    Toast.makeText(context, reason, Toast.LENGTH_LONG).show();
-                }
-            }
+        presenter.getRefuseList();
+    }
 
-            @Override
-            public void lockChequeButton() {
+    public void onGetRefusesCursor(Cursor cursor) {
+        showRefuseDialog(cursor);
+    }
 
-            }
-
-            @Override
-            public void unlockChequeButton() {
-
-            }
-        },this));
+    public void showRefuseDialog(Cursor cursor) {
+        FragmentManager fm = getSupportFragmentManager();
+        SimpleListReasonDialog.newInstance(this,cursor).show(fm,"fragment_simple_list_reason_dialog");
     }
 
     @Override
     public void onReasonChoosed(String reasonId,int canceled) {
-        runOnUiThread(new OrderCanceled(reasonId,canceled));
+        presenter.setOrderCanceled(reasonId,canceled);
+    }
+
+
+    //payment fragment
+
+    @Override
+    public void onChangePaymentValue(int paymentType,double summ) {
+        presenter.changePaymentValue(paymentType,summ);
+    }
+
+    @Override
+    public void onChangePaymentValueComplete() {
+        presenter.setOrderChanged();
+        presenter.updateOrderPayments();
+    }
+
+
+    //cheque types dialog
+
+    public void onGetChequeTypesCursor(Cursor cursor) {
+        showChequeTypesDialog(cursor);
+    }
+
+    public void showChequeTypesDialog(Cursor cursor) {
+
+        FragmentManager fm = getSupportFragmentManager();
+
+        SimpleListChequeTypeDialog.newInstance(this,cursor).show(fm,"fragment_simple_list_check_type_dialog");
     }
 
     @Override
     public void onCheckTypeChoosed(int checkType) {
-        runOnUiThread(new OrderDetailsPayment(checkType));
+        presenter.getOrderPayments(checkType);
+    }
+
+    //payment dialog
+
+    @Override
+    public void onGetPaymentsCursor(Cursor cursor, double sumToPay, int checkType) {
+        showPaymentTypesDialog(cursor,checkType,sumToPay);
+    }
+
+    public void showPaymentTypesDialog(Cursor cursor,int checkType,double sumToPay) {
+
+        FragmentManager fm = getSupportFragmentManager();
+        SimpleListPaymentDialog.newInstance(this,cursor,checkType,sumToPay).show(fm,"fragment_simple_list_payment_dialog");
     }
 
     @Override
     public void onPaymentTypeChoosed(Map<Integer,Double> map,int checkType) {
-        runOnUiThread(new ConfirmPayment(map,checkType));
+
+        mPaymentTypes = map;
+        mCheckType = checkType;
+        presenter.confirmPayment();
+
     }
 
-    public class ConfirmPayment implements Runnable {
-        //private String mPaymentTypeId;
-        private Map<Integer,Double> mPaymentTypeCode;
-        private int mCheckType;
+    //cheque confirm dialog
 
-        ConfirmPayment(Map<Integer,Double> map,int checkType) {
-            //mPaymentTypeId = paymentTypeId;
-            mPaymentTypeCode = map;
-            mCheckType = checkType;
-        }
+    public void onConfirmPayment(Cursor cursor) {
+        showChequeDialog(cursor,mPaymentTypes,mCheckType);
+    }
+    public void showChequeDialog(Cursor cursor,Map<Integer,Double> paymentTypeCode,int checkType) {
 
-        @Override
-        public void run() {
-            SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
-            if (db == null) {
-                return;
-            }
-            String[] args = {orderId};
-            Cursor cursor = db.rawQuery(String.format("select oi._id,oi.order_id,oi.item_id,oi.checked,oi.discount,oi.cost,oi.count,i.description from order_items as oi left join items as i on oi.item_id = i._id where oi.order_id = ? and oi.checked = 1 group by oi._id,oi.order_id,oi.item_id,oi.checked,oi.discount,oi.cost,oi.count,i.description"), args);
-
-            showCheckConfirmDialog(cursor,mPaymentTypeCode, mCheckType);
-        }
+        FragmentManager fm = getSupportFragmentManager();
+        ChequeConfirmDialog.newInstance(this,cursor,paymentTypeCode,checkType).show(fm,"fragment_simple_check_confirm_dialog");
     }
 
-    public class OrderCanceled implements Runnable {
-        private String mItemId = "";
-        private int mCanceled;
+    //CALL PAYMENT SERVICE
+    @Override
+    public void onChequeClicked(Map<Integer,Double> map,final int checkType,String notification) {
 
-        OrderCanceled(String itemId,int canceled) {
-            mItemId = itemId;
-            mCanceled = canceled;
-        }
+        ChequeData chequeData = new ChequeData();
+        
 
-        @Override
-        public void run() {
-
-            ContentValues cv = new ContentValues();
-            cv.put(DBHelper.CN_ORDER_REFUSE_ID, mItemId);
-            cv.put(DBHelper.CN_ORDER_CANCELED, mCanceled);
-
-            SQLiteDatabase db = sqLiteOpenHelper.getWritableDatabase();
-            if (db == null) {
-                return;
-            }
-            db.update(DBHelper.TB_ORDERS, cv, "_id = ? and driver_id = ?", new String[] { orderId,loginId });
-            db.close();
-
-            runOnUiThread(new OrderChanged(null));
-            runOnUiThread(new OrderDetailsCursorUpdate());
-        }
+        startActionPayment(chequeData);
     }
 
-    public class OrderCompleted implements Runnable {
-        private int mCompleted = 0;
-        private int mCheckType;
 
-        OrderCompleted(int checkType) {
-            mCheckType = checkType;
-        }
-
-        @Override
-        public void run() {
-
-            ContentValues cv = new ContentValues();
-
-            SQLiteDatabase db = sqLiteOpenHelper.getWritableDatabase();
-
-            if (db == null) {
-                return;
-            }
-
-            double sumToPay = getSumToPay(db,IFptr.CHEQUE_TYPE_SELL);
-            cv.put(DBHelper.CN_ORDER_COMPLETED, sumToPay > 0.0 ? 0 : 1);
-            db.update(DBHelper.TB_ORDERS, cv, "_id = ? and driver_id = ?", new String[] { orderId,loginId });
-            db.close();
-
-            runOnUiThread(new OrderChanged(null));
-        }
-    }
-
-    public class UpdateOrderItem implements Runnable {
-        private String mItemId = "",mEID = "";
-        private SearchBarcodeCallback mCallback;
-        private Context mContext;
-
-        UpdateOrderItem(String itemId,String eid, SearchBarcodeCallback callback, Context context) {
-            mItemId = itemId;
-            mEID = eid;
-            mCallback = callback;
-            mContext = context;
-        }
-
-        @Override
-        public void run() {
-            SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
-            if (isOrderComplete(db)) {
-                db.close();
-                if (mCallback != null)
-                    mCallback.processCallback(0,getString(R.string.order_detail_order_completed),orderId,mContext);
-                return;
-            }
-
-            Cursor cursor = db.rawQuery(String.format("select _id,checked from order_items where order_id = ? and item_id = ? and eid = ?"),new String[] {orderId,mItemId,mEID});
-            ContentValues cv = new ContentValues();
-            if (cursor.moveToNext()) {
-                cv.put(DBHelper.CN_ORDER_ITEM_CHECKED, cursor.getInt(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_CHECKED)) == 1 ? 0 : 1);
-                cursor.close();
-            } else
-            {
-                mCallback.processCallback(0,getString(R.string.order_details_error_item_order_not_found),mItemId,mContext);
-                return;
-            }
-            db.close();
-
-            db = sqLiteOpenHelper.getWritableDatabase();
-            if (db == null) {
-                return;
-            }
-            int update = db.update(DBHelper.TB_ORDER_ITEMS, cv, "order_id = ? and item_id = ? and eid = ?", new String[] { orderId,mItemId,mEID });
-            cv = new ContentValues();
-            cv.put(DBHelper.CN_ORDER_ITEM_CHECKED, DBHelper.isDeliveryCheck(db, orderId)?1:0);
-            db.update(DBHelper.TB_ORDER_ITEMS, cv, "item_id = ? and order_id = ?", new String[] {DBHelper.ID_DELIVERY, orderId });
-            db.close();
-            mCallback.processCallback(update,"",mItemId,mContext);
-        }
-    }
-
-    public class UpdateOrderItemDelivery implements Runnable {
-        private String mItemId = "";
-        private SearchBarcodeCallback mCallback;
-        private Context mContext;
-
-        UpdateOrderItemDelivery(String itemId, SearchBarcodeCallback callback, Context context) {
-            mItemId = itemId;
-            mCallback = callback;
-            mContext = context;
-        }
-
-        @Override
-        public void run() {
-            SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
-            if (isOrderComplete(db)) {
-                db.close();
-                if (mCallback != null)
-                    mCallback.processCallback(0,getString(R.string.order_detail_order_completed),orderId,mContext);
-                return;
-            }
-
-            Cursor cursor = db.rawQuery(String.format("select _id,checked from order_items where order_id = ? and item_id = ?"),new String[] {orderId,mItemId});
-            ContentValues cv = new ContentValues();
-            if (cursor.moveToNext()) {
-                cv.put(DBHelper.CN_ORDER_ITEM_CHECKED, cursor.getInt(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_CHECKED)) == 1 ? 0 : 1);
-                cursor.close();
-            } else
-            {
-                mCallback.processCallback(0,getString(R.string.order_details_error_item_order_not_found),mItemId,mContext);
-                return;
-            }
-            db.close();
-
-            db = sqLiteOpenHelper.getWritableDatabase();
-            if (db == null) {
-                return;
-            }
-            int update = db.update(DBHelper.TB_ORDER_ITEMS, cv, "item_id = ? and order_id = ?", new String[] {DBHelper.ID_DELIVERY, orderId });
-            db.close();
-            mCallback.processCallback(update,"",mItemId,mContext);
-        }
-    }
-
-    public class SearchBarcode implements Runnable {
-        private String mBarcode = "";
-        private SearchBarcodeCallback mCallback;
-        private Context mContext;
-
-        SearchBarcode(String barcode, SearchBarcodeCallback callback,Context context) {
-            mBarcode = barcode;
-            mCallback = callback;
-            mContext = context;
-        }
-
-        @Override
-        public void run() {
-            SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
-            if (isOrderComplete(db)) {
-                db.close();
-                if (mCallback != null)
-                    mCallback.processCallback(0,getString(R.string.order_detail_order_completed),orderId,mContext);
-                return;
-            }
-            String itemId = "";
-            Cursor cursor = db.rawQuery(String.format("select oi._id,oi.checked,oi.item_id, oi.eid from order_items oi join items i on i._id = oi.item_id where oi.order_id = ? and (oi.eid = ? or i.barcode = ?)"),new String[] {orderId,mBarcode,mBarcode});
-
-            ContentValues cv = new ContentValues();
-            if (cursor.moveToNext()) {
-                cv.put(DBHelper.CN_ID, cursor.getString(0));
-                cv.put(DBHelper.CN_ORDER_ITEM_CHECKED, cursor.getInt(1) == 1 ? 0 : 1);
-                itemId = cursor.getString(3);
-
-            } else
-            {
-                if (mCallback != null)
-                mCallback.processCallback(0,getString(R.string.order_details_error_item_order_not_found),mBarcode,mContext);
-                cursor.close();
-                return;
-            }
-            cursor.close();
-            db.close();
-
-            db = sqLiteOpenHelper.getWritableDatabase();
-            if (db == null) {
-                return;
-            }
-            int update = db.update(DBHelper.TB_ORDER_ITEMS, cv, "order_id = ? and eid = ?", new String[] { orderId,itemId });
-            cv = new ContentValues();
-            cv.put(DBHelper.CN_ORDER_ITEM_CHECKED, DBHelper.isDeliveryCheck(db, orderId)?1:0);
-            db.update(DBHelper.TB_ORDER_ITEMS, cv, "order_id = ? and item_id = \"1\"", new String[] { orderId });
-            db.close();
-            if (mCallback != null)
-            mCallback.processCallback(update,"",mBarcode,mContext);
-        }
-    }
-
-    public class OrderChanged implements Runnable {
-        private SearchBarcodeCallback mCallback;
-
-        OrderChanged(SearchBarcodeCallback callback) {
-            mCallback = callback;
-        }
-
-        @Override
-        public void run() {
-            SQLiteDatabase db = sqLiteOpenHelper.getWritableDatabase();
-            if (db == null) {
-                return;
-            }
-
-            DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-            String date = dateFormat.format(new Date());
-            ContentValues cv = new ContentValues();
-            cv.put(DBHelper.CN_ID, orderId);
-            cv.put(DBHelper.CN_ORDER_DRIVER_ID, loginId);
-            cv.put(DBHelper.CN_CODE, numberId);
-            cv.put(DBHelper.CN_ORDER_TIME, date);
-            long update = db.replace(DBHelper.TB_ORDERS_CHG,null, cv);
-            db.close();
-            if (mCallback != null)
-            mCallback.processCallback((int) update,"",orderId,null);
-        }
-    }
-
-    public class OrderDetailsRefuse implements Runnable {
-
-        private SearchBarcodeCallback mCallback;
-        private Context mContext;
-
-        OrderDetailsRefuse(SearchBarcodeCallback callback, Context context) {
-            mCallback = callback;
-            mContext = context;
-        }
-
-        @Override
-        public void run() {
-            SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
-            if (isOrderComplete(db)) {
-                db.close();
-                if (mCallback != null)
-                    mCallback.processCallback(0,getString(R.string.order_detail_order_completed),orderId,mContext);
-                return;
-            }
-            Cursor cursor = db.query(DBHelper.TB_REFUSE_REASONS, null, null, null, null, null, null);
-            showRefuseDialog(cursor);
-        }
-    }
-
-    public class OrderDetailsPayment implements Runnable {
-
-        int mCheckType;
-
-        public OrderDetailsPayment(int checkType) {
-            mCheckType = checkType;
-        }
-
-        @Override
-        public void run() {
-            SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
-            if (db == null) {
-                return;
-            }
-
-            Cursor cursor;
-            if (mCheckType == IFptr.CHEQUE_TYPE_SELL) {
-                cursor = db.rawQuery(String.format("select * from payment_types  where selectable = 1"), null);
-
-            } else {//исключаем те виды оплаты которых нет в текущей оплате, чтобы они случайно не выбрали другой тип оплаты при возврате
-                /*cursor = db.rawQuery(String.format("select * from payment_types as pt " +
-                        "inner join (select payment_type_id,sum(" +
-                        "case when check_type < 2 then (sum - ifnull(discount,0))  " +
-                        "else -1 * (sum - ifnull(discount,0))) end paid_sum from order_payments where order_id = ? group by payment_type_id) as op on pt._id = op.payment_type_id " +
-                        "where op.paid_sum > 0"), new String[]{orderId});//and op.paid > 0*/
-
-                cursor = db.rawQuery(String.format("select * from payment_types as pt " +
-                        "inner join (select payment_type_id,sum(case when check_type < 2 then (sum - ifnull(discount, 0)) else -1 * (sum - ifnull(discount, 0)) end) as paid_sum " +
-                        "from order_payments where order_id = ? " +
-                        "group by payment_type_id) as op on pt._id = op.payment_type_id " +
-                        "where op.paid_sum > 0"), new String[]{orderId});//and op.paid > 0
-
-            }
-            //сразу расчитываем сумму для смешанной оплаты если это чек продажи
-            double sumToPay = getSumToPay(db,mCheckType);
-
-            showPaymentTypesDialog(cursor,mCheckType,sumToPay);
-        }
-    }
-
-    public class OrderDetailsCheckType implements Runnable {
-
-        @Override
-        public void run() {
-            SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
-            if (db == null) {
-                return;
-            }
-            Cursor cursor = db.rawQuery("select * from check_types",null);
-
-            showCheckTypeDialog(cursor);
-        }
-    }
-
-    public Boolean isOrderComplete(SQLiteDatabase db) {
-
-        if (db == null) {
-            return null;
-        }
-        Cursor cursor = db.rawQuery(String.format("select o._id,s.completed from orders as o "+
-                " inner join statuses as s on o.status_id = s._id "+
-                " where o._id = ? and (o.posted = 1 or o.completed = 1)") ,new String[] {orderId});
-        return cursor.getCount() > 0;
-    }
-
-    public Boolean isOrderPaid(SQLiteDatabase db) {
-
-        if (db == null) {
-            return null;
-        }
-        Cursor cursor = db.rawQuery(String.format("select op.* from order_payments op where op.order_id = ? and op.paid = 1"),new String[] {orderId});
-
-        if (cursor.getCount() > 0) {
-
-            cursor.close();
-            return true;
-        }
-        cursor.close();
-        return false;
-    }
-
-    public static double getSumToPay(SQLiteDatabase db,int checkType) {
-
-        if (db == null) {
-            return 0;
-        }
-        double sum = 0;
-        Cursor cursor = null;
-        if (checkType == IFptr.CHEQUE_TYPE_SELL) {//проверяем если уже был платеж то если дозаказали товар
-            cursor = db.rawQuery(String.format("select tp.topay - ifnull(op.paid,0) sum " +
-                    "from " +
-                    "(select sum(count * (cost - discount)) topay,order_id  from order_items " +
-                    "where order_id = ? and checked = 1) tp  " +
-                    "left join " +
-                    "(select sum(p.paid) paid,p.order_id from " +
-                    "(select case when check_type = 1 then sum - ifnull(discount,0) else -(sum - ifnull(discount,0)) end paid,order_id from order_payments where order_id = ?) p " +
-                    "group by p.order_id) op " +
-                    "on tp.order_id = op.order_id ") , new String[]{orderId,orderId});
-            //cursor = db.rawQuery("select sum(p.paid) paid,p.order_id from (select case when check_type = 1 then sum - ifnull(discount,0) else -(sum - ifnull(discount,0)) end paid,order_id from order_payments where order_id = ?) p group by p.order_id", new String[]{ orderId});
-        }  else if (checkType == IFptr.CHEQUE_TYPE_RETURN) {
-            cursor = db.rawQuery(String.format("select tp.topay sum " +
-                    "from " +
-                    "(select sum(count * (cost - discount)) topay from order_items " +
-                    "where order_id = ? and checked = 1 ) as tp"), new String[]{ orderId});
-        }
-
-
-        while (cursor.moveToNext()) {
-            sum += cursor.getDouble(cursor.getColumnIndex(DBHelper.CN_ORDER_PAYMENT_SUM));
-        }
-        cursor.close();
-        return sum;
-    }
-
-    private static String getDriverDescription(SQLiteDatabase db) {
-
-        String name = "Курьер";
-        if (db == null) {
-            return name;
-        }
-        Cursor cursor = db.rawQuery(String.format("select decription from drivers where _id = ? "), new String[]{ loginId});
-        while (cursor.moveToNext()) {
-            name = cursor.getString(cursor.getColumnIndex(DBHelper.CN_DESCRIPTION));
-        }
-        cursor.close();
-        return name;
-    }
-
-    private String getError() {
-        int rc = fptr.get_ResultCode();
-        if (rc < 0) {
-            String rd = fptr.get_ResultDescription(), bpd = null;
-            if (rc == -6) {
-                bpd = fptr.get_BadParamDescription();
-            }
-            if (bpd != null) {
-                return String.format("[%d] %s (%s)", rc, rd, bpd);
-            } else {
-                return String.format("[%d] %s", rc, rd);
-            }
-        }
-        return "";
-    }
-
-    public class AddPayment extends AsyncTask<Context, Integer, Integer> {
-    //public class AddPayment {
+   /* public class AddPayment extends AsyncTask<Context, Integer, Integer> {
+        //public class AddPayment {
         //private String mPaymentTypeId = "";
         private Map<Integer,Double> mPaymentTypeCode;
         private int mCheckType;
@@ -989,11 +531,11 @@ public class OrderDetailsActivity extends FPTRActivity implements OnFragmentHand
                 mCheckType = IFptr.CHEQUE_TYPE_RETURN;
             }
 
-/*            if (isOrderPaid(db) &&  mCheckType != IFptr.CHEQUE_TYPE_RETURN) {
+*//*            if (isOrderPaid(db) &&  mCheckType != IFptr.CHEQUE_TYPE_RETURN) {
                 db.close();
                 mErrorMessage = getString(R.string.order_detail_order_paid);
                 return 0;
-            }*/
+            }*//*
 
             if (sumToPay <= 0) {
                 db.close();
@@ -1079,12 +621,12 @@ public class OrderDetailsActivity extends FPTRActivity implements OnFragmentHand
                 //тут записываем текущее состояние счетчиков чеков ккм
 
                 Cursor cursor = null;
-/*                if (isReturnCheque) {
+*//*                if (isReturnCheque) {
                     cursor = db.rawQuery("select oi.*,i.description from order_items oi " +
                             "left join items as i on oi.item_id = i._id " +
                             "where oi.order_id = ? and oi.checked = 1 and oi.item_id <> ? group by oi._id", new String[]{orderId,"1"});
-                } else {*/
-                    cursor = db.rawQuery(String.format("select oi.*,i.description from order_items oi left join items as i on oi.item_id = i._id where oi.order_id = ? and oi.checked = 1 group by oi._id"), new String[]{orderId});
+                } else {*//*
+                cursor = db.rawQuery(String.format("select oi.*,i.description from order_items oi left join items as i on oi.item_id = i._id where oi.order_id = ? and oi.checked = 1 group by oi._id"), new String[]{orderId});
                 //}
 
                 while (cursor.moveToNext()) {
@@ -1264,176 +806,16 @@ public class OrderDetailsActivity extends FPTRActivity implements OnFragmentHand
 
 
                 if (fptr != null)
-                fptr.destroy();
+                    fptr.destroy();
                 fptr = null;
 
             }
 
         }
-    }
-
-    private static class DriverException extends Exception {
-        public DriverException(String msg) {
-            super(msg);
-        }
-    }
-
-    public class OrderItemListCursorUpdate implements Runnable {
-
-        @Override
-        public void run() {
-            SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
-            if (db == null) {
-                return;
-            }
-            String[] args = {orderId,orderId};
-            Cursor cursor = db.rawQuery(String.format(
-                    "select oi._id,oi.item_id,oi.checked,oi.discount,oi.cost,oi.count,i.description,os.completed,os.delivery_cost,os.level_delivery_pay, oi.eid from order_items as oi " +
-                    "left join items as i on oi.item_id = i._id " +
-                    "left join " +
-                    "   (select o._id,o.delivery_cost,o.level_delivery_pay,s.completed from orders as o "+
-                    "    left join statuses as s on o.status_id = s._id "+
-                    //"	 ) as os on oi.order_id = os._id " +
-                    //" group by oi._id,oi.item_id,oi.checked,oi.discount,oi.cost,oi.count,i.description,os.completed,os.delivery_cost,os.level_delivery_pay, oi.eid", null);
-                    "	 where o._id = ?) as os on oi.order_id = os._id " +
-                    "where oi.order_id = ? group by oi._id,oi.item_id,oi.checked,oi.discount,oi.cost,oi.count,i.description,os.completed,os.delivery_cost,os.level_delivery_pay, oi.eid"), args);
-
-            if (!OrderItemsFragment.fragment.isDetached()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    OrderItemsFragment.fragment.updateCursor(cursor);
-                    OrderItemsFragment.fragment.recalculateFooter(cursor);
-                } else {
-                    OrderItemsFragment.fragment.recalculateFooter(cursor);
-                    OrderItemsFragment.fragment.updateCursor(cursor);
-                }
-            }
-        }
-    }
-
-    public class OrderDetailsCursorUpdate implements Runnable {
-
-        @Override
-        public void run() {
-            SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
-            if (db == null) {
-                return;
-            }
-            String[] args = {orderId, loginId};
-            Cursor cursor = db.rawQuery(String.format("select o.*,s.description as status,s.completed,r.description as refuse from orders as o " +
-                    "left join statuses as s on o.status_id = s._id " +
-                    "left join refuse_reasons as r on o.refuse_id = r._id " +
-                    "where o._id = ? and o.driver_id = ?"), args);
-            if (OrderDetailsFragment.fragment != null) {
-                OrderDetailsFragment.fragment.updateCursor(cursor);
-            }
-        }
-    }
-
-    public class OrderItemPaymentCursorUpdate implements Runnable {
-
-        @Override
-        public void run() {
-            SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
-            if (db == null) {
-                return;
-            }
-
-            String[] args = {orderId};
-            Cursor cursor = db.rawQuery(String.format(
-                    "select op._id,op.check_type,op.check_number,op.session,op.date,op.payment_type_id, " +
-                            "case when op.check_type  = 1 then op.sum else -op.sum end sum," +
-                            "case when op.check_type  = 1 then ifnull(op.discount,0)  else  ifnull(-op.discount,0) end discount," +
-                            "pt.description as payment_type,ct.description from order_payments as op " +
-                            "left join payment_types as pt on op.payment_type_id = pt._id " +
-                            "left join check_types as ct on op.check_type = ct.code " +
-                            "where op.order_id = ? "), args);
+    }*/
 
 
-            if (OrderPaymentsFragment.fragment == null) return;
 
-            if (!OrderPaymentsFragment.fragment.isDetached()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    OrderPaymentsFragment.fragment.updateCursor(cursor);
-                    OrderPaymentsFragment.fragment.recalculateFooter(cursor);
-                } else {
-                    OrderPaymentsFragment.fragment.recalculateFooter(cursor);
-                    OrderPaymentsFragment.fragment.updateCursor(cursor);
-                }
-            }
-        }
-    }
-
-    public  void showRefuseDialog(Cursor cursor) {
-
-        FragmentManager fm = getSupportFragmentManager();
-        SimpleListReasonDialog.newInstance(this,cursor).show(fm,"fragment_simple_list_reason_dialog");
-    }
-
-    public  void showPaymentTypesDialog(Cursor cursor,int checkType,double sumToPay) {
-
-        FragmentManager fm = getSupportFragmentManager();
-        SimpleListPaymentDialog.newInstance(this,cursor,checkType,sumToPay).show(fm,"fragment_simple_list_payment_dialog");
-    }
-
-    public  void showCheckTypeDialog(Cursor cursor) {
-
-        FragmentManager fm = getSupportFragmentManager();
-
-        SimpleListChequeTypeDialog.newInstance(this,cursor).show(fm,"fragment_simple_list_check_type_dialog");
-    }
-
-    public  void showCheckConfirmDialog(Cursor cursor,Map<Integer,Double> paymentTypeCode,int checkType) {
-
-        FragmentManager fm = getSupportFragmentManager();
-        ChequeConfirmDialog.newInstance(this,cursor,paymentTypeCode,checkType).show(fm,"fragment_simple_check_confirm_dialog");
-    }
-
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-
-        OrderDetailsActivity mContext;
-        public SectionsPagerAdapter(FragmentManager fm, OrderDetailsActivity context) {
-            super(fm);
-            mContext = context;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-
-            Fragment fragment = null;
-
-            switch (position) {
-                case 0:
-                    fragment = OrderDetailsFragment.newInstance(mContext);
-                    break;
-                case 1:
-                    fragment = OrderItemsFragment.newInstance(mContext);
-                    break;
-                case  2:
-                    fragment = OrderPaymentsFragment.newInstance(mContext);
-            }
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return getString(R.string.order_details_page1);
-                case 1:
-                    return getString(R.string.order_details_page2);
-                case 2:
-                    return getString(R.string.order_details_page3);
-            }
-            return null;
-        }
-    }
 
 
 }

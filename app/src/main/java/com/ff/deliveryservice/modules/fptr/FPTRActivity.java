@@ -17,6 +17,7 @@ import com.ff.deliveryservice.R;
 import com.ff.deliveryservice.application.DeliveryServiceApplication;
 import com.ff.deliveryservice.base.BaseActivity;
 import com.ff.deliveryservice.common.Constants;
+import com.ff.deliveryservice.mvp.model.ChequeData;
 import com.ff.deliveryservice.mvp.view.FPTRView;
 
 import java.util.Date;
@@ -157,7 +158,7 @@ public abstract class FPTRActivity extends BaseActivity implements FPTRView {
     void reportZ() {
 
         if (preferences.getString(Constants.SP_USER_NAME,"").isEmpty()) {
-            showYesNoMessageDialog("Ошибка Z отчета","Сначала выберите пользователя!",null);
+            showYesNoMessageDialog("Ошибка Z отчета","Сначала выберите пользователя!",null,null);
             return;
         }
         String userName = preferences.getString(Constants.SP_USER_NAME,"");
@@ -254,6 +255,15 @@ public abstract class FPTRActivity extends BaseActivity implements FPTRView {
         startService(intent);
     }
 
+    public void startActionPayment(ChequeData chequeData) {
+
+        Intent intent = getStartIntent(FPTRService.ACTION_PAYMENT_REQUEST);
+        intent.putExtra(ChequeData.class.getCanonicalName(),chequeData);
+
+        registerReceiver(new String[]{FPTRService.ACTION_PAYMENT_RESPONSE});
+        startService(intent);
+    }
+
    /* public  boolean isServiceRunning() {
         return Utils.isServiceRunning(mContext,FPTRService.class);
     }*/
@@ -313,7 +323,7 @@ public abstract class FPTRActivity extends BaseActivity implements FPTRView {
                             intent.getIntExtra(EXTRA_FIRST_UNSENT_NUMBER,0),
                             date,
                             intent.getStringExtra(EXTRA_OFD_MESSAGE_READ));
-                    showYesNoMessageDialog("Статус информационного обмена",message,null);
+                    showYesNoMessageDialog("Статус информационного обмена",message,null,null);
 
                 }
                 if(action.equals(FPTRService.ACTION_BATTERY_STATE_RESPONSE)) {

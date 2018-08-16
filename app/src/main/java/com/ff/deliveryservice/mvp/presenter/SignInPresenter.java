@@ -152,8 +152,6 @@ public class SignInPresenter extends BasePresenter<SignInView>
         @Override
         protected void onPostExecute(final Boolean success) {
 
-            onCancelled();
-
             if (success) {
 
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -175,12 +173,14 @@ public class SignInPresenter extends BasePresenter<SignInView>
 
                 callback.onError(R.string.error_incorrect_password,errorMessage);
             }
+
+            mAuthTask = null;
         }
 
         @Override
         protected void onCancelled() {
             mAuthTask = null;
-            callback.onSignIn(false,null);
+            callback.onError(R.string.cancel_button,null);
         }
 
 

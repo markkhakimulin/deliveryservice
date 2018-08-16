@@ -11,14 +11,23 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.ff.deliveryservice.base.BaseFragment;
+import com.ff.deliveryservice.modules.details.adapter.ItemsAdapter;
+import com.ff.deliveryservice.modules.details.adapter.PaymentsAdapter;
 import com.ff.deliveryservice.mvp.model.DBHelper;
 import com.ff.deliveryservice.modules.details.OrderDetailsActivity;
 import com.ff.deliveryservice.R;
+import com.ff.deliveryservice.mvp.view.BaseView;
 
-public class OrderItemsFragment extends ListFragment implements AbsListView.OnScrollListener,AbsListView.OnItemLongClickListener {
+public class OrderItemsFragment extends BaseFragment implements
+        AbsListView.OnScrollListener,
+        AbsListView.OnItemLongClickListener,
+        AbsListView.OnItemClickListener,
+        BaseView {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -44,52 +53,8 @@ public class OrderItemsFragment extends ListFragment implements AbsListView.OnSc
         return fragment;
     }
 
-    public void updateCursor(Cursor cursor) {
-
-
-        if (((CursorAdapter)getListAdapter()) == null) {
-
-            setListAdapter(new CursorAdapter(getActivity(), cursor, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) {
-
-                @Override
-                public View newView(Context context, Cursor cursor, ViewGroup parent) {
-
-                    LayoutInflater inflater = LayoutInflater.from(context);
-                    View view = inflater.inflate(R.layout.item_row, parent, false);
-                    return view;
-                }
-
-                @Override
-                public void bindView(View view, Context context, Cursor cursor) {
-
-                    if (!cursor.isAfterLast()) {
-                        boolean checked = (1 == cursor.getInt(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_CHECKED)));
-                        int count = cursor.getInt(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_COUNT));
-                        float discount = cursor.getFloat(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_DISCOUNT));
-                        float cost = cursor.getFloat(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_COST));
-                        ((CheckBox) view.findViewById(R.id.item_row_checkbox_view)).setChecked(checked);
-                        ((TextView) view.findViewById(R.id.item_row_description_view)).setText(cursor.getString(cursor.getColumnIndex(DBHelper.CN_DESCRIPTION)));
-                        ((TextView) view.findViewById(R.id.item_id)).setText(cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_EID)));
-                        ((TextView) view.findViewById(R.id.item_row_discount_view)).setText(Float.toString(discount));
-                        ((TextView) view.findViewById(R.id.item_row_cost_view)).setText(Float.toString(cost));
-                        ((TextView) view.findViewById(R.id.item_row_count_view)).setText(Integer.toString(count));
-                    }
-                }
-                @Override
-                public Cursor swapCursor(Cursor newCursor) {
-                    Cursor old = super.swapCursor(newCursor);
-                    notifyDataSetChanged();
-                    return old;
-                }
-                @Override
-                public void changeCursor(Cursor cursor) {
-                    super.changeCursor(cursor);
-                    notifyDataSetChanged();
-                }
-            });
-        } else {
-            ((CursorAdapter)getListAdapter()).swapCursor(cursor);
-        }
+    protected CursorAdapter getNewCursorAdapter(Cursor cursor) {
+        return new ItemsAdapter(getActivity(),cursor);
     }
 
     public void recalculateFooter(Cursor cursor) {
@@ -120,45 +85,41 @@ public class OrderItemsFragment extends ListFragment implements AbsListView.OnSc
         ((TextView) itemsFooter.findViewById(R.id.item_row_footer_topay_view)).setText(Float.toString(mSumm));
         ((TextView) itemsFooter.findViewById(R.id.footer_delivery_info_text)).setText(Float.toString(levelDeliveryPay)+" р. - порог бесплатной доставки");
 
-        if (getListView().getFooterViewsCount() == 0){
+        if (mListView.getFooterViewsCount() == 0){
 
-            getListView().addFooterView(itemsFooter);
+            mListView.addFooterView(itemsFooter);
 
         }
-
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-        Cursor cursor = ((CursorAdapter) this.getListAdapter()).getCursor();
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Cursor cursor = ((CursorAdapter) this.mListView.getAdapter()).getCursor();
         cursor.moveToPosition(position);
         String itemId =  cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_ID));
         String eid =  cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_EID));
         mFragmentCreatedHandler.onItemClicked(itemId,eid);
-
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_order_items, container,false);
         itemsFooter = inflater.inflate(R.layout.item_row_footer, null ,false);
-
+        mListView = rootView.findViewById(android.R.id.list);
         return rootView;
     }
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         //the dividers
         mFragmentCreatedHandler.onFragmentViewCreated(getClass().getCanonicalName());
-        getListView().setOnScrollListener(this);
-        getListView().setOnItemLongClickListener(this);
+        mListView.setOnScrollListener(this);
+        mListView.setOnItemLongClickListener(this);
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        Cursor cursor = ((CursorAdapter) this.getListAdapter()).getCursor();
+        Cursor cursor = ((CursorAdapter) mListView.getAdapter()).getCursor();
         cursor.moveToPosition(position);
         String itemId =  cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_ID));
         mFragmentCreatedHandler.onItemLongClicked(itemId);
@@ -180,4 +141,5 @@ public class OrderItemsFragment extends ListFragment implements AbsListView.OnSc
         }
 
     }
+
 }
