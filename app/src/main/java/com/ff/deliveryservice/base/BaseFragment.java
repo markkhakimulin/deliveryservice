@@ -4,11 +4,17 @@ import android.database.Cursor;
 import android.support.annotation.CallSuper;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.CursorAdapter;
+import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.ff.deliveryservice.modules.details.adapter.DetailsFragmentList;
+import com.ff.deliveryservice.mvp.model.BaseData;
+import com.ff.deliveryservice.mvp.model.OrderItem;
 import com.ff.deliveryservice.mvp.view.BaseView;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.Callable;
 
 /**
@@ -19,28 +25,26 @@ public abstract class BaseFragment extends Fragment implements BaseView {
 
 
     protected ListView mListView;
-    protected CursorAdapter adapter;
+    protected DetailsFragmentList adapter;
+
     public BaseFragment() {
 
     }
 
-    public void updateCursor(Cursor cursor) {
+    public void updateCursor(ArrayList<?> list) {
 
         if (mListView.getAdapter() == null) {
-            adapter = getNewCursorAdapter(cursor);
-            mListView.setAdapter(getNewCursorAdapter(cursor));
+            adapter = getNewCursorAdapter(list);
+            mListView.setAdapter(adapter);
         } else {
             if (adapter != null) {
-                adapter.changeCursor(cursor);
-                adapter.notifyDataSetChanged();
+                adapter.update(list);
             }
-            //((CursorAdapter)mListView.getAdapter()).swapCursor(cursor);
-            //((CursorAdapter)mListView.getAdapter()).notifyDataSetChanged();
-        }
 
+        }
     }
 
-    protected abstract CursorAdapter getNewCursorAdapter(Cursor cursor);
+    protected abstract DetailsFragmentList getNewCursorAdapter(ArrayList<?>  list);
 
 
     @Override

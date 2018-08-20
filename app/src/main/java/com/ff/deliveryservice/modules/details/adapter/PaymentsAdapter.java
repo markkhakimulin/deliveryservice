@@ -1,15 +1,22 @@
 package com.ff.deliveryservice.modules.details.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.CursorAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.ff.deliveryservice.R;
 import com.ff.deliveryservice.mvp.model.DBHelper;
+import com.ff.deliveryservice.mvp.model.OrderItem;
+import com.ff.deliveryservice.mvp.model.OrderPayment;
+
+import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import ru.atol.drivers10.fptr.IFptr;
@@ -18,42 +25,44 @@ import ru.atol.drivers10.fptr.IFptr;
  * Created by Mark Khakimulin on 15.08.2018.
  * mark.khakimulin@gmail.com
  */
-public class PaymentsAdapter extends CursorAdapter {
+public class PaymentsAdapter extends ArrayAdapter<OrderPayment> implements DetailsFragmentList<OrderPayment>  {
 
 
     private Context mContext;
 
-    public PaymentsAdapter(Context context, Cursor c) {
-
-        super(context, c, android.support.v4.widget.CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-
-        mContext = context;
+    public PaymentsAdapter(Context context, ArrayList<OrderPayment> payments) {
+        super(context, R.layout.payment_row, payments);
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return LayoutInflater.from(context).inflate(R.layout.payment_row, parent, false);
-    }
+    public View getView(int position, View convertView, ViewGroup parent) {
 
-    @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+        View view = convertView;
 
-        if (!cursor.isAfterLast()) {
+        if (view == null) {
+            LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+            view = layoutInflater.inflate(R.layout.item_row, null);
+        }
 
-            String paymentType = cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_PAYMENT_TYPE));
-            float payment = cursor.getFloat(cursor.getColumnIndex(DBHelper.CN_ORDER_PAYMENT_SUM));
-            float discount = cursor.getFloat(cursor.getColumnIndex(DBHelper.CN_ORDER_PAYMENT_DISCOUNT));
-            String chequeTypeDescription = cursor.getString(cursor.getColumnIndex(DBHelper.CN_DESCRIPTION));
-            String chequeNumber = cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_PAYMENT_CHECK_NUMBER));
-            String chequeDate = cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_DATE));
-            String chequeSession = cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_PAYMENT_CHECK_SESSION));
+        OrderPayment item = getItem(position);
+
+        if (item != null) {
+            String paymentTypeId = item.getPaymentTypeId();
+            float payment = item.getSum();
+            float discount = item.getDiscount();
+            String chequeTypeDescription = item.getChequeTypeDescription();
+            int chequeNumber = item.getChequeNumber();
+            String chequeDate = item.getDate();
+            int chequeSession = item.getSession();
+            String paymentTypeDescription = item.getChequeTypeDescription();
             ((TextView) view.findViewById(R.id.cheque_row_type_view)).setText(chequeTypeDescription);
-            ((TextView) view.findViewById(R.id.payment_row_type_view)).setText(paymentType);
+            ((TextView) view.findViewById(R.id.payment_row_type_view)).setText(paymentTypeDescription);
             ((TextView) view.findViewById(R.id.payment_row_sum_view)).setText(Float.toString(payment - discount));
             ((TextView) view.findViewById(R.id.cheque_number)).setText(chequeNumber);
             ((TextView) view.findViewById(R.id.cheque_date)).setText(chequeDate.substring(0,16));
             ((TextView) view.findViewById(R.id.cheque_session)).setText(chequeSession);
-            int chequeType = cursor.getInt(cursor.getColumnIndex(DBHelper.CN_ORDER_PAYMENT_CHEQUE_TYPE));
+            int chequeType = item.getChequeType();
             if (chequeType == IFptr.LIBFPTR_RT_SELL ) {
                 //((ImageView) view.findViewById(R.id.icon_cheque_type)).setImageResource(R.mipmap.plus);
                 view.setBackground(mContext.getResources().getDrawable(R.drawable.payment_sell));
@@ -63,5 +72,15 @@ public class PaymentsAdapter extends CursorAdapter {
                 view.setBackground(mContext.getResources().getDrawable(R.drawable.payment_return));
             }
         }
+        return view;
+    }
+
+    @Override
+    public void update(ArrayList<OrderPayment> list) {
+        clear();
+        for (OrderPayment item : list) {
+            insert(item,getCount());
+        }
+        notifyDataSetChanged();
     }
 }

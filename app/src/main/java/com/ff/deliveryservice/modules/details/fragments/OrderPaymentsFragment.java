@@ -18,11 +18,16 @@ import android.widget.TextView;
 
 import com.ff.deliveryservice.application.DeliveryServiceApplication;
 import com.ff.deliveryservice.base.BaseFragment;
+import com.ff.deliveryservice.modules.details.adapter.DetailsFragmentList;
 import com.ff.deliveryservice.modules.details.adapter.PaymentsAdapter;
 import com.ff.deliveryservice.mvp.model.DBHelper;
 import com.ff.deliveryservice.R;
+import com.ff.deliveryservice.mvp.model.OrderItem;
+import com.ff.deliveryservice.mvp.model.OrderPayment;
 import com.ff.deliveryservice.mvp.presenter.DetailsPresenter;
 import com.ff.deliveryservice.mvp.view.BaseView;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -41,6 +46,7 @@ public class OrderPaymentsFragment extends BaseFragment implements AbsListView.O
     public OrderPaymentsFragment() {
 
     }
+
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -51,9 +57,9 @@ public class OrderPaymentsFragment extends BaseFragment implements AbsListView.O
         return fragment;
     }
 
-
-    protected CursorAdapter getNewCursorAdapter(Cursor cursor) {
-        return ((CursorAdapter) new PaymentsAdapter(getActivity(),cursor));
+    @Override
+    protected DetailsFragmentList getNewCursorAdapter(ArrayList<?> list) {
+        return  new PaymentsAdapter(getActivity(),(ArrayList<OrderPayment>) list);
     }
 
 
@@ -71,10 +77,9 @@ public class OrderPaymentsFragment extends BaseFragment implements AbsListView.O
         builder.setTitle("Изменение суммы");
         final AlertDialog dialog = builder.create();
 
-        Cursor cursor = ((CursorAdapter) this.mListView.getAdapter()).getCursor();
-        cursor.moveToPosition(position);
-        final int payment_id = cursor.getInt(cursor.getColumnIndex(DBHelper.CN_ID));
-        double payment_summ = cursor.getInt(cursor.getColumnIndex(DBHelper.CN_ORDER_PAYMENT_SUM));
+        OrderPayment orderPayment = (OrderPayment) adapter.getItem(position);
+        final int payment_id = Integer.valueOf(orderPayment.getId());
+        double payment_summ = orderPayment.getSum();
         final EditText editSumm = convertView.findViewById(R.id.edit_summ);
         editSumm.setText(String.valueOf(Math.abs(payment_summ)));
         Button applyButton = convertView.findViewById(R.id.button_apply);
@@ -82,7 +87,7 @@ public class OrderPaymentsFragment extends BaseFragment implements AbsListView.O
             @Override
             public void onClick(View v) {
                 double summ = 0;
-                if (editSumm.getText().toString() != "") summ = Double.valueOf(editSumm.getText().toString());
+                if (!editSumm.getText().toString().isEmpty()) summ = Double.valueOf(editSumm.getText().toString());
 
                 mFragmentCreatedHandler.onChangePaymentValue(payment_id,summ);
 
@@ -94,13 +99,13 @@ public class OrderPaymentsFragment extends BaseFragment implements AbsListView.O
         return true;
     }
 
-    public void recalculateFooter(Cursor cursor) {
+    public void recalculateFooter() {
 
         mSumm = 0;
         mDiscount = 0;
-        while (cursor.moveToNext()) {
-            float cost = cursor.getFloat(cursor.getColumnIndex(DBHelper.CN_ORDER_PAYMENT_SUM));
-            float disc = cursor.getFloat(cursor.getColumnIndex(DBHelper.CN_ORDER_PAYMENT_DISCOUNT));
+        for (int i = 0; i <adapter.getCount();i++) {
+            float cost = ((OrderPayment)adapter.getItem(i)).getSum();
+            float disc = ((OrderPayment)adapter.getItem(i)).getDiscount();
             mSumm += cost;
             mDiscount += disc;
         }

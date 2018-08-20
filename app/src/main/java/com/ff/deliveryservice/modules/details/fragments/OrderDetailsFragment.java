@@ -18,11 +18,14 @@ import android.widget.TextView;
 
 import com.ff.deliveryservice.application.DeliveryServiceApplication;
 import com.ff.deliveryservice.base.BaseFragment;
+import com.ff.deliveryservice.modules.details.adapter.DetailsFragmentList;
 import com.ff.deliveryservice.mvp.model.DBHelper;
 import com.ff.deliveryservice.R;
+import com.ff.deliveryservice.mvp.model.OrderData;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -61,23 +64,24 @@ public class OrderDetailsFragment extends BaseFragment {
 
     public OrderDetailsFragment() {}
 
+    @Override
+    protected DetailsFragmentList getNewCursorAdapter(ArrayList<?> list) {
+        return null;
+    }
 
-    public void updateCursor(Cursor cursor) {
 
-        //super.updateCursor(cursor);
-        if (cursor.moveToFirst()) {
-            mCode.setText(cursor.getString(cursor.getColumnIndex(DBHelper.CN_CODE)));
-            mId.setText(cursor.getString(cursor.getColumnIndex(DBHelper.CN_ID)));
-            mCustomer.setText(cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_CUSTOMER)));
-            mDate.setText(cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_DATE)));
-            String time = cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_TIME));
-            if (time != null && !time.isEmpty()) time = time.replaceAll("\n",". ");
-            mTime.setText(time);
-            mPhone.setText(cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_PHONE)));
-            mAddress.setText(cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_ADDRESS)));
-            mComment.setText(cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_COMMENT)));
-            mStatus.setText(cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_STATUS)));
-            mRefuseReason.setText(cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_REFUSE)));
+    public void updateCursor(OrderData data) {
+
+            mCode.setText(data.getCode());
+            mId.setText(data.getId());
+            mCustomer.setText(data.getCustomer());
+            mDate.setText(data.getDate());
+            mTime.setText(data.getTime());
+            mPhone.setText(data.getPhone());
+            mAddress.setText(data.getAddress());
+            mComment.setText(data.getComment());
+            mStatus.setText(data.getStatus());
+            mRefuseReason.setText(data.getRefuseReason());
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -112,13 +116,8 @@ public class OrderDetailsFragment extends BaseFragment {
                     }
                 }
             });
-        }
     }
 
-    @Override
-    protected CursorAdapter getNewCursorAdapter(Cursor cursor) {
-        return null;
-    }
 
     /**
      * Returns a new instance of this fragment for the given section

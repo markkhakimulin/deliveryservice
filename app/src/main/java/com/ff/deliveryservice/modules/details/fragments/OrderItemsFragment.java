@@ -16,12 +16,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.ff.deliveryservice.base.BaseFragment;
+import com.ff.deliveryservice.modules.details.adapter.DetailsFragmentList;
 import com.ff.deliveryservice.modules.details.adapter.ItemsAdapter;
 import com.ff.deliveryservice.modules.details.adapter.PaymentsAdapter;
 import com.ff.deliveryservice.mvp.model.DBHelper;
 import com.ff.deliveryservice.modules.details.OrderDetailsActivity;
 import com.ff.deliveryservice.R;
+import com.ff.deliveryservice.mvp.model.OrderItem;
 import com.ff.deliveryservice.mvp.view.BaseView;
+
+import java.util.ArrayList;
 
 public class OrderItemsFragment extends BaseFragment implements
         AbsListView.OnScrollListener,
@@ -53,12 +57,14 @@ public class OrderItemsFragment extends BaseFragment implements
         return fragment;
     }
 
-    protected CursorAdapter getNewCursorAdapter(Cursor cursor) {
-        return new ItemsAdapter(getActivity(),cursor);
+    @Override
+    protected DetailsFragmentList getNewCursorAdapter(ArrayList<?> list) {
+        return new ItemsAdapter(getActivity(), (ArrayList<OrderItem>) list);
     }
 
     public void recalculateFooter(Cursor cursor) {
 
+        if (cursor.isClosed()) return;
         mItemCount = 0;
         mDiscount = mCost = mSumm = 0;
         float levelDeliveryPay = 0;
@@ -87,18 +93,17 @@ public class OrderItemsFragment extends BaseFragment implements
 
         if (mListView.getFooterViewsCount() == 0){
 
-            mListView.addFooterView(itemsFooter);
+            mListView.setFooterDividersEnabled(true);
+            //mListView.addFooterView(itemsFooter);
 
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Cursor cursor = ((CursorAdapter) this.mListView.getAdapter()).getCursor();
-        cursor.moveToPosition(position);
-        String itemId =  cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_ID));
-        String eid =  cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_EID));
-        mFragmentCreatedHandler.onItemClicked(itemId,eid);
+
+        OrderItem item = (OrderItem)adapter.getItem(position);
+        mFragmentCreatedHandler.onItemClicked(item.getItemId(),item.getEid());
     }
 
     @Override
@@ -115,14 +120,13 @@ public class OrderItemsFragment extends BaseFragment implements
         mFragmentCreatedHandler.onFragmentViewCreated(getClass().getCanonicalName());
         mListView.setOnScrollListener(this);
         mListView.setOnItemLongClickListener(this);
+        mListView.setOnItemClickListener(this);
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        Cursor cursor = ((CursorAdapter) mListView.getAdapter()).getCursor();
-        cursor.moveToPosition(position);
-        String itemId =  cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_ID));
-        mFragmentCreatedHandler.onItemLongClicked(itemId);
+        OrderItem item = (OrderItem)adapter.getItem(position);
+        mFragmentCreatedHandler.onItemLongClicked(item.getItemId());
         return true;
     }
 

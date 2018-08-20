@@ -47,7 +47,7 @@ public class DetailsModule {
 
     @Provides
     DetailsPresenter provideNavigationPresenter() {
-        return new DetailsPresenter(mView,mCodeId,mOrederId,mUserId);
+        return new DetailsPresenter(mView,mOrederId,mCodeId,mUserId);
     }
 
 

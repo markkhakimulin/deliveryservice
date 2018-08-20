@@ -12,16 +12,22 @@ import android.os.Build;
 import com.ff.deliveryservice.R;
 import com.ff.deliveryservice.application.DeliveryServiceApplication;
 import com.ff.deliveryservice.base.BasePresenter;
+import com.ff.deliveryservice.modules.details.adapter.ItemsAdapter;
 import com.ff.deliveryservice.modules.details.fragments.OrderDetailsFragment;
 import com.ff.deliveryservice.modules.details.fragments.OrderItemsFragment;
 import com.ff.deliveryservice.modules.details.fragments.OrderPaymentsFragment;
 import com.ff.deliveryservice.modules.scanner.SearchBarcodeCallback;
 import com.ff.deliveryservice.mvp.model.DBHelper;
+import com.ff.deliveryservice.mvp.model.OrderData;
+import com.ff.deliveryservice.mvp.model.OrderItem;
+import com.ff.deliveryservice.mvp.model.OrderPayment;
 import com.ff.deliveryservice.mvp.view.OrderDetailsView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -173,7 +179,7 @@ public class DetailsPresenter extends BasePresenter<OrderDetailsView>
     }
 
     public void setOrderChanged() {
-        new Thread(new OrderChanged()).start();
+        new Thread(new OrderChanged()).run();
     }
 
     public class OrderChanged implements Runnable {
@@ -311,47 +317,58 @@ public class DetailsPresenter extends BasePresenter<OrderDetailsView>
     }
 
 
-
-
     public void updateOrderPayments() {
         UpdateOrderItemListTask updateOrderItemsTask = new UpdateOrderItemListTask();
         updateOrderItemsTask.execute();
     }
 
     @SuppressLint("StaticFieldLeak")
-    public class OrderItemPaymentCursorUpdate extends AsyncTask<Void, Void, Cursor>{
+    public class OrderItemPaymentCursorUpdate extends AsyncTask<Void, Void, ArrayList<OrderPayment> >{
+
+
 
         @Override
-        protected Cursor doInBackground(Void... voids) {
+        protected ArrayList<OrderPayment>  doInBackground(Void... voids) {
             SQLiteDatabase db = dbHelper.getReadableDatabase();
 
             String[] args = {mOrderId};
-            return db.rawQuery("select op._id,op.check_type,op.check_number,op.session,op.date,op.payment_type_id, " +
+            Cursor cursor = db.rawQuery("select op._id,op.check_type,op.check_number,op.session,op.date,op.payment_type_id, " +
                     "case when op.check_type  = 1 then op.sum else -op.sum end sum," +
                     "case when op.check_type  = 1 then ifnull(op.discount,0)  else  ifnull(-op.discount,0) end discount," +
                     "pt.description as payment_type,ct.description from order_payments as op " +
                     "left join payment_types as pt on op.payment_type_id = pt._id " +
                     "left join check_types as ct on op.check_type = ct.code " +
                     "where op.order_id = ? ", args);
+
+
+            ArrayList<OrderPayment> list = new ArrayList<>();
+
+            while (cursor.moveToNext()) {
+                list.add(new OrderPayment(cursor));
+            }
+            cursor.close();
+            db.close();
+
+            return list;
+
         }
 
         @Override
-        protected void onPostExecute(Cursor cursor) {
-            super.onPostExecute(cursor);
+        protected void onPostExecute(ArrayList<OrderPayment>  list) {
+
 
             if (!OrderPaymentsFragment.fragment.isDetached()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    OrderPaymentsFragment.fragment.updateCursor(cursor);
-                    OrderPaymentsFragment.fragment.recalculateFooter(cursor);
+                    OrderPaymentsFragment.fragment.updateCursor(list);
+                    OrderPaymentsFragment.fragment.recalculateFooter();
                 } else {
-                    OrderPaymentsFragment.fragment.recalculateFooter(cursor);
-                    OrderPaymentsFragment.fragment.updateCursor(cursor);
+                    OrderPaymentsFragment.fragment.recalculateFooter();
+                    OrderPaymentsFragment.fragment.updateCursor(list);
                 }
             }
         }
 
     }
-
 
 
 
@@ -361,43 +378,62 @@ public class DetailsPresenter extends BasePresenter<OrderDetailsView>
     }
 
     @SuppressLint("StaticFieldLeak")
-    public class UpdateOrderItemListTask  extends AsyncTask<Void, Void, Cursor> {
+    public class UpdateOrderItemListTask  extends AsyncTask<Void, Void, ArrayList<OrderItem>> {
+
 
         @Override
-        protected Cursor doInBackground(Void... voids) {
+        protected ArrayList<OrderItem> doInBackground(Void... voids) {
+
+            ArrayList<OrderItem> list = new ArrayList<>();
             SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-            String[] args = {mUserId,mOrderId};
-            return db.rawQuery(String.format(
-                    "select oi._id,oi.item_id,oi.checked,oi.discount,oi.cost,oi.count,i.description,os.completed,os.delivery_cost,os.level_delivery_pay, oi.eid from order_items as oi " +
-                            "left join items as i on oi.item_id = i._id " +
-                            "left join " +
-                            "   (select o._id,o.delivery_cost,o.level_delivery_pay,s.completed from orders as o "+
-                            "    left join statuses as s on o.status_id = s._id "+
-                            //"	 ) as os on oi.order_id = os._id " +
-                            //" group by oi._id,oi.item_id,oi.checked,oi.discount,oi.cost,oi.count,i.description,os.completed,os.delivery_cost,os.level_delivery_pay, oi.eid", null);
-                            "	 where o._id = ?) as os on oi.order_id = os._id " +
-                            "where oi.order_id = ? group by oi._id,oi.item_id,oi.checked,oi.discount,oi.cost,oi.count,i.description,os.completed,os.delivery_cost,os.level_delivery_pay, oi.eid"), args);
+            if (db == null || !db.isOpen()) {
+                return  list;
+            }
+
+            if (db.isDbLockedByCurrentThread()) {
+                db.setTransactionSuccessful();
+                db.yieldIfContendedSafely();
+            }
+
+            String[] args = {mOrderId,mOrderId};
+
+            Cursor cursor = db.rawQuery("select oi._id,oi.item_id,oi.checked,oi.discount,oi.cost,oi.count,i.description,os.completed,os.delivery_cost,os.level_delivery_pay, oi.eid from order_items as oi " +
+                    "left join items as i on oi.item_id = i._id " +
+                    "left join " +
+                    "   (select o._id,o.delivery_cost,o.level_delivery_pay,s.completed from orders as o "+
+                    "    left join statuses as s on o.status_id = s._id "+
+                    //"	 ) as os on oi.order_id = os._id " +
+                    //" group by oi._id,oi.item_id,oi.checked,oi.discount,oi.cost,oi.count,i.description,os.completed,os.delivery_cost,os.level_delivery_pay, oi.eid", null);
+                    "	 where o._id = ?) as os on oi.order_id = os._id " +
+                    "where oi.order_id = ? group by oi._id,oi.item_id,oi.checked,oi.discount,oi.cost,oi.count,i.description,os.completed,os.delivery_cost,os.level_delivery_pay, oi.eid", args);
+
+
+            while (cursor.moveToNext()) {
+                list.add(new OrderItem(cursor));
+            }
+
+            cursor.close();
+            db.close();
+            return  list;
 
         }
 
         @Override
-        protected void onPostExecute(Cursor cursor) {
+        protected void onPostExecute(ArrayList<OrderItem> list) {
 
             if (OrderItemsFragment.fragment != null && !OrderItemsFragment.fragment.isDetached()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    OrderItemsFragment.fragment.updateCursor(cursor);
-                    OrderItemsFragment.fragment.recalculateFooter(cursor);
+                    OrderItemsFragment.fragment.updateCursor(list);
+                    //OrderItemsFragment.fragment.recalculateFooter(cursor);
                 } else {
-                    OrderItemsFragment.fragment.recalculateFooter(cursor);
-                    OrderItemsFragment.fragment.updateCursor(cursor);
+                    //OrderItemsFragment.fragment.recalculateFooter(cursor);
+                    OrderItemsFragment.fragment.updateCursor(list);
                 }
             }
+
         }
     }
-
-
-
 
 
     public void updateOrderDetails() {
@@ -406,24 +442,36 @@ public class DetailsPresenter extends BasePresenter<OrderDetailsView>
     }
 
     @SuppressLint("StaticFieldLeak")
-    public class UpdateOrderDetailsTask extends AsyncTask<Void, Void, Cursor>  {
+    public class UpdateOrderDetailsTask extends AsyncTask<Void, Void, OrderData>  {
+
+        SQLiteDatabase db;
 
         @Override
-        protected Cursor doInBackground(Void... voids) {
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
+        protected OrderData doInBackground(Void... voids) {
+            db = dbHelper.getReadableDatabase();
 
             String[] args = {mOrderId, mUserId};
-            return db.rawQuery("select o.*,s.description as status,s.completed,r.description as refuse from orders as o " +
+            Cursor cursor = db.rawQuery("select o.*,s.description as status,s.completed,r.description as refuse from orders as o " +
                     "left join statuses as s on o.status_id = s._id " +
                     "left join refuse_reasons as r on o.refuse_id = r._id " +
                     "where o._id = ? and o.driver_id = ?", args);
+
+            cursor.moveToNext();
+            OrderData orderData = new OrderData(cursor);
+
+            cursor.close();
+            db.close();
+
+            return  orderData;
         }
 
         @Override
-        protected void onPostExecute(Cursor cursor) {
+        protected void onPostExecute(OrderData orderData) {
+
+
 
             if (OrderDetailsFragment.fragment != null && !OrderItemsFragment.fragment.isDetached()) {
-                OrderDetailsFragment.fragment.updateCursor(cursor);
+                OrderDetailsFragment.fragment.updateCursor(orderData);
             }
         }
     }

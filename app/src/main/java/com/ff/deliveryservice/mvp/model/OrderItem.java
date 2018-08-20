@@ -1,5 +1,6 @@
 package com.ff.deliveryservice.mvp.model;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,18 +10,29 @@ import android.os.Parcelable;
  */
 public class OrderItem extends BaseData{
 
-    private float mPrice;
-    private int mQuantity;
+    private float mPrice,mDiscount,mPriceDelivery,mPaymentDelivery;
+    private int mQuantity,mChecked,mCompleted;
+    private String mOrderId,mItemId,mEid;
 
     public OrderItem() {
         super();
 
     }
 
-    public OrderItem(String id, String title,float price,int quantity) {
+    public OrderItem(Cursor cursor) {
+        fill(cursor);
+    }
+
+    public OrderItem(String id, String title,float price,float discount ,int quantity) {
+        this(id, title,price,discount,quantity,0);
+    }
+
+    public OrderItem(String id, String title,float price,float discount ,int quantity,int checked) {
         super(id, title);
         mPrice = price;
+        mDiscount = discount;
         mQuantity = quantity;
+        mChecked = checked;
     }
 
     public float getPrice() {
@@ -63,6 +75,61 @@ public class OrderItem extends BaseData{
         mQuantity = parcel.readInt();
         mPrice = parcel.readFloat();
     }
+
+
+    public int getChecked() {
+        return mChecked;
+    }
+
+    public void setChecked(int mChecked) {
+        this.mChecked = mChecked;
+    }
+
+    public float getDiscount() {
+        return mDiscount;
+    }
+
+/*     public String getOrderId() {
+        return mOrderId;
+    }*/
+
+    public String getItemId() {
+        return mItemId;
+    }
+
+    public String getEid() {
+        return mEid;
+    }
+
+    public int getCompleted() {
+        return mCompleted;
+    }
+
+    public float getPriceDelivery() {
+        return mPriceDelivery;
+    }
+
+    public float getPaymentDelivery() {
+        return mPaymentDelivery;
+    }
+
+
+    public void fill(Cursor cursor) {
+        mId = cursor.getString(cursor.getColumnIndex(DBHelper.CN_ID));
+        //mOrderId = cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_ID));
+        mItemId = cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_ID));
+        mChecked = cursor.getInt(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_CHECKED));
+        mDiscount = cursor.getFloat(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_DISCOUNT));
+        mPrice = cursor.getFloat(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_COST));
+        mQuantity = cursor.getInt(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_COUNT));
+        mDescription = cursor.getString(cursor.getColumnIndex(DBHelper.CN_DESCRIPTION));
+        mCompleted = cursor.getInt(cursor.getColumnIndex(DBHelper.CN_ORDER_COMPLETED));
+        mPriceDelivery = cursor.getFloat(cursor.getColumnIndex(DBHelper.CN_ORDER_DELIVERY_COST));
+        mPaymentDelivery = cursor.getFloat(cursor.getColumnIndex(DBHelper.CN_ORDER_LEVEL_DELIVERY_PAY));
+        mEid = cursor.getString(cursor.getColumnIndex(DBHelper.CN_ORDER_ITEM_EID));
+
+    }
+
 
 
 }
