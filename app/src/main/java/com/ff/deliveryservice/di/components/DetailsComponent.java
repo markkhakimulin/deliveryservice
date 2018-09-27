@@ -17,10 +17,9 @@ import dagger.Subcomponent;
 public interface DetailsComponent {
 
 
-    ChequeConfirmDialog exposeChequeConfirmDialog();
 
     void inject(DetailsPresenter presenter);
     void inject(OrderDetailsActivity activity);
-    //void inject(OrderPaymentsFragment orderPaymentsFragment);
+    void inject(ChequeConfirmDialog chequeConfirmDialog);
     //void inject(OrderDetailsFragment orderDetailsFragment);
 }

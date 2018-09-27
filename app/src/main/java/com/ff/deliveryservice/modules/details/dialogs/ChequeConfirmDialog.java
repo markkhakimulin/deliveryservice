@@ -18,6 +18,8 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.ff.deliveryservice.application.DeliveryServiceApplication;
+import com.ff.deliveryservice.di.components.ApplicationComponent;
 import com.ff.deliveryservice.mvp.model.DBHelper;
 import com.ff.deliveryservice.modules.details.OrderDetailsActivity;
 import com.ff.deliveryservice.R;
@@ -36,15 +38,14 @@ public class ChequeConfirmDialog extends DialogFragment implements DialogInterfa
     private int mCheckType;
     private double mSumm = 0,mDiscount = 0;
     private String mNotification = null,orderId;
+    private DBHelper dbHelper;
 
-    @Inject
-    DBHelper dbHelper;
 
-    @Inject
-    public ChequeConfirmDialog() {}
+     public ChequeConfirmDialog() {}
 
 
     public String getChequeDescription() {
+
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
@@ -67,6 +68,7 @@ public class ChequeConfirmDialog extends DialogFragment implements DialogInterfa
         fragment.mPaymentTypeCode = paymentTypeCode;
         fragment.mCheckType = checkType;
         fragment.mFragmentCreatedHandler = fragmentCreatedHandler;
+        fragment.dbHelper = DeliveryServiceApplication.getApplicationComponent().dbHelper();
         return fragment;
     }
     @Override
@@ -102,6 +104,7 @@ public class ChequeConfirmDialog extends DialogFragment implements DialogInterfa
             }
         });
         TextView commonSumm = (TextView) view.findViewById(R.id.common_summ);
+
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         commonSumm.setText(commonSumm.getText() +Double.toString(dbHelper.getSumToPay(db,mCheckType,orderId))+getString(R.string.currency));

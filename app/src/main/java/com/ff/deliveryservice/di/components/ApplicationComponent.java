@@ -8,6 +8,7 @@ import com.ff.deliveryservice.modules.fptr.FPTRActivity;
 import com.ff.deliveryservice.modules.fptr.FPTRService;
 import com.ff.deliveryservice.modules.splash.MainActivity;
 import com.ff.deliveryservice.di.module.ApplicationModule;
+import com.ff.deliveryservice.mvp.model.DBHelper;
 
 import javax.inject.Singleton;
 
@@ -35,8 +36,7 @@ public interface ApplicationComponent {
 
     //Resources exposeResources();
     //SharedPreferences exposeSharedPrefs();
-    //DBHelper exposeDBHelper();
-    FPTRService exposeFptrService();
+    DBHelper dbHelper();
 
     void inject(MainActivity mainActivity);
     void inject(FPTRActivity activity);

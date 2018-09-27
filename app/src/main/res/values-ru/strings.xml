@@ -99,6 +99,8 @@
     <string name="action_check">Проверить связь с ККМ</string>
     <string name="action_check_unsent_data_ofd">Диагностика ОФД</string>
     <string name="action_status_ofd">Состояние с ОФД</string>
+    <string name="action_ofd_report">OFD диагностика</string>
+    <string name="action_ofd_transport">Передать данные в ОФД</string>
     <string name="action_process_cheque">Обработка пробития чека</string>
     <string name="action_about">Информация</string>
     <string name="title_about_app">Версия приложения</string>

@@ -28,6 +28,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import ru.atol.drivers10.fptr.settings.SettingsActivity;
 
+import static com.ff.deliveryservice.modules.fptr.FPTRService.EXTRA_CAN_PRINT;
+import static com.ff.deliveryservice.modules.fptr.FPTRService.EXTRA_CHARGE;
 import static com.ff.deliveryservice.modules.fptr.FPTRService.EXTRA_DATETIME;
 import static com.ff.deliveryservice.modules.fptr.FPTRService.EXTRA_EXCHANGE_STATUS;
 import static com.ff.deliveryservice.modules.fptr.FPTRService.EXTRA_FIRST_UNSENT_NUMBER;
@@ -38,6 +40,7 @@ import static com.ff.deliveryservice.modules.fptr.FPTRService.EXTRA_PROGRESS;
 import static com.ff.deliveryservice.modules.fptr.FPTRService.EXTRA_RESULT;
 import static com.ff.deliveryservice.modules.fptr.FPTRService.EXTRA_UNSENT_COUNT;
 import static com.ff.deliveryservice.modules.fptr.FPTRService.EXTRA_USER_NAME;
+import static com.ff.deliveryservice.modules.fptr.FPTRService.EXTRA_USE_BATTERY;
 
 /**
  * Created by khakimulin on 03.02.2017.
@@ -112,7 +115,6 @@ public abstract class FPTRActivity extends BaseActivity implements FPTRView {
 
         switch (id) {
 
-
             case R.id.action_settings:
                 openSettings();
                 break;
@@ -130,9 +132,12 @@ public abstract class FPTRActivity extends BaseActivity implements FPTRView {
                 break;
             case R.id.action_z_report:
                 reportZ();
+            case R.id.action_ofd_transport:
+                transportOFD();
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     private void openSettings() {
         Intent intent = new Intent(FPTRActivity.this,SettingsActivity.class);
@@ -164,6 +169,9 @@ public abstract class FPTRActivity extends BaseActivity implements FPTRView {
         String userName = preferences.getString(Constants.SP_USER_NAME,"");
         Snackbar.make(contentView,getString(R.string.msg_do_not_turn_off_attention),Snackbar.LENGTH_LONG).show();
         startActionReportZ(userName);
+    }
+    private void transportOFD() {
+        startActionOFDTransport();
     }
 
     @Override
@@ -230,8 +238,8 @@ public abstract class FPTRActivity extends BaseActivity implements FPTRView {
     }
     public void startActionOFDState() {
 
-        registerReceiver(new String[]{FPTRService.ACTION_CHECK_CONNECT_OFD_RESPONSE});
-        startService(getStartIntent(FPTRService.ACTION_CHECK_CONNECT_OFD_REQUEST));
+        registerReceiver(new String[]{FPTRService.ACTION_OFD_STATE_RESPONSE});
+        startService(getStartIntent(FPTRService.ACTION_OFD_STATE_REQUEST));
     }
 
     public void startActionBatteryState() {
@@ -251,7 +259,7 @@ public abstract class FPTRActivity extends BaseActivity implements FPTRView {
         Intent intent = getStartIntent(FPTRService.ACTION_Z_REPORT_REQUEST);
         intent.putExtra(EXTRA_USER_NAME,userName);
 
-        registerReceiver(new String[]{FPTRService.ACTION_Z_REPORT_RESPONSE});
+        registerReceiver(new String[]{FPTRService.ACTION_Z_REPORT_RESPONSE,FPTRService.ACTION_CHECK_DOCUMENT_CLOSED_RESPONSE,FPTRService.ACTION_OFD_STATE_RESPONSE});
         startService(intent);
     }
 
@@ -260,13 +268,15 @@ public abstract class FPTRActivity extends BaseActivity implements FPTRView {
         Intent intent = getStartIntent(FPTRService.ACTION_PAYMENT_REQUEST);
         intent.putExtra(ChequeData.class.getCanonicalName(),chequeData);
 
-        registerReceiver(new String[]{FPTRService.ACTION_PAYMENT_RESPONSE});
+        registerReceiver(new String[]{FPTRService.ACTION_PAYMENT_RESPONSE,FPTRService.ACTION_CHECK_DOCUMENT_CLOSED_RESPONSE,FPTRService.ACTION_OFD_STATE_RESPONSE});
         startService(intent);
     }
 
-   /* public  boolean isServiceRunning() {
-        return Utils.isServiceRunning(mContext,FPTRService.class);
-    }*/
+    public void startActionOFDTransport() {
+
+        registerReceiver(new String[]{FPTRService.ACTION_OFD_STATE_RESPONSE});
+        startService(getStartIntent(FPTRService.ACTION_OFD_TRANSPORT_REQUEST));
+    }
 
     /*
      * стартует интент сервис. после того как он выполнится сервис сам грохнется
@@ -278,12 +288,6 @@ public abstract class FPTRActivity extends BaseActivity implements FPTRView {
         intent.setAction(action);
         return intent;
 
-    }
-
-    protected void stopService(){
-
-        Intent intent = new Intent(getApplicationContext(),FPTRService.class);
-        stopService(intent);
     }
 
     private class FPTRServiceReceiver extends BroadcastReceiver {
@@ -305,7 +309,7 @@ public abstract class FPTRActivity extends BaseActivity implements FPTRView {
 
                 context.unregisterReceiver(fptrServiceReceiver);
 
-                if (action.equals(FPTRService.ACTION_CHECK_CONNECT_OFD_RESPONSE)){
+                if (action.equals(FPTRService.ACTION_OFD_STATE_RESPONSE)){
 
 
                     String date = intent.getIntExtra(EXTRA_DATETIME,0) <= 0
@@ -323,12 +327,20 @@ public abstract class FPTRActivity extends BaseActivity implements FPTRView {
                             intent.getIntExtra(EXTRA_FIRST_UNSENT_NUMBER,0),
                             date,
                             intent.getStringExtra(EXTRA_OFD_MESSAGE_READ));
-                    showYesNoMessageDialog("Статус информационного обмена",message,null,null);
+                    showYesNoMessageDialog("Статус обмена с ОФД",message,null,null);
 
                 }
                 if(action.equals(FPTRService.ACTION_BATTERY_STATE_RESPONSE)) {
-                    //String string_from_service = intent.getStringExtra(MyIntentService.KEY_STRING_FROM_SERVICE);
-                    //textViewMsgReceived.setText(String.valueOf(string_from_service));
+
+                    @SuppressLint("DefaultLocale")
+                    String message = String.format(
+                                    "Заряд аккумулятора : %d\n" +
+                                    "Работа от аккумулятора : %s\n" +
+                                    "Возможность печати : %s",
+                            intent.getIntExtra(EXTRA_CHARGE,0),
+                            intent.getStringExtra(EXTRA_USE_BATTERY),
+                            intent.getStringExtra(EXTRA_CAN_PRINT));
+                    showYesNoMessageDialog("Состояние аккумулятора",message,null,null);
 
                 }
 

@@ -100,6 +100,8 @@
     <string name="action_check">Check connect CCM</string>
     <string name="action_check_unsent_data_ofd">Diagnostic OFD</string>
     <string name="action_status_ofd">Status OFD</string>
+    <string name="action_ofd_report">OFD report</string>
+    <string name="action_ofd_transport">Transfer data OFD</string>
     <string name="action_process_cheque">Process cheque complete</string>
     <string name="action_about">About</string>
     <string name="title_about_app">About app</string>

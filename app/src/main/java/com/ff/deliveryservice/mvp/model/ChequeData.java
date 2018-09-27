@@ -13,8 +13,23 @@ public class ChequeData implements Parcelable{
 
 
     private String mOrderId,mNotification,mContact;
+
+    public void setChequeType(int mChequeType) {
+        this.mChequeType = mChequeType;
+    }
+
     private int mChequeType;
     private Map<Integer,Double> mPaymentsType;
+
+    public String getCashier() {
+        return mCashier;
+    }
+
+    public void setCashier(String mCashier) {
+        this.mCashier = mCashier;
+    }
+
+    private String mCashier;
 
     public String getOrderId() {
         return mOrderId;
@@ -72,6 +87,7 @@ public class ChequeData implements Parcelable{
         dest.writeString(mContact);
         dest.writeString(mNotification);
         dest.writeInt(mChequeType);
+        dest.writeString(mCashier);
         dest.writeInt(mPaymentsType.size());
         for(Map.Entry<Integer,Double> entry : mPaymentsType.entrySet()){
             dest.writeInt(entry.getKey());
@@ -85,6 +101,7 @@ public class ChequeData implements Parcelable{
         mContact = parcel.readString();
         mNotification = parcel.readString();
         mChequeType = parcel.readInt();
+        mCashier = parcel.readString();
         int size = parcel.readInt();
         for(int i = 0; i < size; i++){
             Integer key = parcel.readInt();
